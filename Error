@@ -1,0 +1,3389 @@
+
+
+
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapShader;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.CornerPathEffect;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
+import android.graphics.Path;
+import android.graphics.Path.Direction;
+import android.graphics.PointF;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Shader.TileMode;
+import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
+import android.media.Image;
+import android.media.MediaScannerConnection;
+import android.media.MediaScannerConnection.MediaScannerConnectionClient;
+import android.net.ConnectivityManager;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build.VERSION;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.text.Layout;
+import android.util.Log;
+import android.view.Display;
+import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
+import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ViewFlipper;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.core.internal.view.SupportMenu;
+import androidx.core.view.GestureDetectorCompat;
+import androidx.core.view.MotionEventCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
+import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
+import com.commit451.nativestackblur.NativeStackBlur;
+import com.divyanshu.colorseekbar.ColorSeekBar;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.tabs.TabLayout;
+import com.xiaopo.flying.sticker.BitmapStickerIcon;
+import com.xiaopo.flying.sticker.DeleteIconEvent;
+import com.xiaopo.flying.sticker.DrawableSticker;
+import com.xiaopo.flying.sticker.FlipHorizontallyEvent;
+import com.xiaopo.flying.sticker.Sticker;
+import com.xiaopo.flying.sticker.TextSticker;
+import com.xiaopo.flying.sticker.ZoomIconEvent;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Random;
+
+import photocreation.camera.blurcamera.Act.HomeActivity;
+import photocreation.camera.blurcamera.Act.SaveActivity;
+import photocreation.camera.blurcamera.Act.Spiral_Editor_Act;
+import photocreation.camera.blurcamera.R;
+import photocreation.camera.blurcamera.Scrapp_Book.Scrap_Adapter.AdptFontt;
+import photocreation.camera.blurcamera.Scrapp_Book.Scrap_Adapter.CollageImageAdapter;
+import photocreation.camera.blurcamera.Scrapp_Book.Scrap_Adapter.ColorPickerAdapter;
+import photocreation.camera.blurcamera.Scrapp_Book.Scrap_Collage.SB_Collage;
+import photocreation.camera.blurcamera.Scrapp_Book.Scrap_Collage.SB_CollageLayout;
+import photocreation.camera.blurcamera.Scrapp_Book.Scrap_Utils.SB_CustomRelativeLayout;
+import photocreation.camera.blurcamera.Scrapp_Book.Scrap_Utils.ImageBlurNormal;
+import photocreation.camera.blurcamera.Scrapp_Book.Scrap_Utils.SB_LibUtility;
+import photocreation.camera.blurcamera.Scrapp_Book.Scrap_Utils.MaskPair;
+import photocreation.camera.blurcamera.Scrapp_Book.Scrap_Utils.SB_MyRecylceAdapterBase;
+import photocreation.camera.blurcamera.Scrapp_Book.Scrap_Utils.RotationGestureDetector;
+import photocreation.camera.blurcamera.Scrapp_Book.Scrap_Utils.Shape;
+import photocreation.camera.blurcamera.Scrapp_Book.Scrap_Utils.ShapeLayout;
+import photocreation.camera.blurcamera.Scrapp_Book.Scrap_Utils.TextDataItem;
+import photocreation.camera.blurcamera.Scrapp_Book.Scrap_Utils.Utility;
+import photocreation.camera.blurcamera.Scrapp_Book.Scrap_Utils.Utils;
+import photocreation.camera.blurcamera.SpiralEditor.Spiral_Fragment.Spiral_StickerCategoryFragment;
+import photocreation.camera.blurcamera.SpiralEditor.Spiral_Stickerviewclass.StickerImageView;
+import photocreation.camera.blurcamera.SpiralEditor.Spiral_Stickerviewclass.StickerView;
+import photocreation.camera.blurcamera.Splash_blur.SplashDialog;
+
+
+@SuppressLint({"NewApi"})
+public class ScrapCreateCollageActivity extends FragmentActivity {
+    public static final int INDEX_COLLAGE = 0;
+    private boolean isLayoutAdded = false;
+    int view_id;
+    public static final int INDEX_COLLAGE_BACKGROUND = 1;
+    public static final int INDEX_COLLAGE_BLUR = 4;
+    public static final int INDEX_COLLAGE_INVISIBLE_VIEW = 5;
+    public static final int INDEX_COLLAGE_RATIO = 3;
+    public static final int INDEX_COLLAGE_SPACE = 2;
+    public static final int TAB_SIZE = 6;
+    private static final String TAG = "CreateCollageActivity";
+    private static final float UPPER_SIZE_FOR_LOAD = 1500.0f;
+    int RATIO_BUTTON_SIZE = 11;
+    Bitmap[] bitmapList;
+    Bitmap btmDelete;
+    Bitmap btmScale;
+    SB_CustomRelativeLayout edt_canvasText;
+    CollageImageAdapter edit_collageAdapter;
+    RecyclerView edit_recyclerViewCollage;
+    Scrap_CollageView collageView;
+    LinearLayout colorContainer;
+    ViewGroup contextFooter;
+
+    int height;
+    boolean isScrapBook = false;
+    private RotationGestureDetector mRotationDetector;
+
+    RelativeLayout mainLayout;
+    float mulX = 1;
+    float mulY = 1;
+    NinePatchDrawable npd;
+    Parameter[] parameterList;
+    ArrayList<SB_MyRecylceAdapterBase> patternAdapterList = new ArrayList<>();
+    ImageView[] ratioButtonArray;
+    AlertDialog saveImageAlert;
+    SeekBar seekBarPadding;
+    SeekBar seekBarRound;
+    SeekBar seekbarBlur;
+    SeekBar seekbarSize;
+    View selectFilterTextView;
+    boolean selectImageForAdj = false;
+    View selectSwapTextView;
+    boolean showText = false;
+    private Animation slideLeftIn;
+    private Animation slideLeftOut;
+    private Animation slideRightIn;
+    private Animation slideRightOut;
+    boolean swapMode = false;
+    View[] tabButtonList;
+    ArrayList<TextDataItem> textDataList = new ArrayList<>();
+    ViewFlipper viewFlipper;
+    int width;
+
+    LinearLayout linearAdsBanner;
+    private Typeface defaultFont;
+    public int defaultTxtColor;
+    public static ScrapCreateCollageActivity activityDocumentEditor;
+    public String defaultText;
+    private Layout.Alignment defaultAlign;
+    public com.xiaopo.flying.sticker.StickerView stickerView;
+    public RelativeLayout rl_txt_color;
+    private ColorSeekBar sb_txt_color;
+    public LinearLayout ly_alignment;
+    protected AdptFontt adptFont;
+
+    public RecyclerView rv_font;
+    private boolean isbold = false;
+    private boolean isitalic = false;
+    protected TextSticker textSticker;
+    LinearLayout lins_sub;
+    LinearLayout sub_edit;
+    SeekBar seek_border;
+    private TabLayout tab_Layout;
+    private ViewPager view_Pager;
+    public static ArrayList<Integer> stickerviewId = new ArrayList<>();
+    private List<String> tab_Titles = new ArrayList<>();
+    public static ScrapCreateCollageActivity main_act;
+    private StickerImageView sticker;
+    private StickerView.OnTouchSticker onTouchSticker = new StickerView.OnTouchSticker() {
+        @Override
+        public void onTouchedSticker(StickerView stickerImageView) {
+            ScrapCreateCollageActivity.this.sticker = (StickerImageView) stickerImageView;
+            ScrapCreateCollageActivity.this.removeBorder();
+        }
+    };
+
+    public static void removeBorder() {
+        for (int i = 0; i < stickerviewId.size(); i++) {
+            View view = main_act.findViewById(stickerviewId.get(i).intValue());
+            if (view instanceof StickerImageView) {
+                ((StickerImageView) view).setControlItemsHidden(true);
+            }
+        }
+    }
+
+    LinearLayout lin_sticker;
+
+    public void addBorderToBitmaps(Bitmap[] bitmapList, Drawable borderDrawable) {
+        for (int i = 0; i < bitmapList.length; i++) {
+            Bitmap originalBitmap = bitmapList[i];
+            int newWidth = originalBitmap.getWidth();
+            int newHeight = originalBitmap.getHeight();
+            Bitmap borderedBitmap = Bitmap.createBitmap(newWidth, newHeight, originalBitmap.getConfig());
+            Canvas canvas = new Canvas(borderedBitmap);
+            Bitmap borderBitmap = drawableToBitmap(borderDrawable);
+            canvas.drawBitmap(originalBitmap, 0, 0, null);
+            int borderWidth = borderBitmap.getWidth();
+            int borderHeight = borderBitmap.getHeight();
+            int x = (newWidth - borderWidth) / 2;
+            int y = (newHeight - borderHeight) / 2;
+            canvas.drawBitmap(borderBitmap, x, y, null);
+            bitmapList[i] = borderedBitmap;
+        }
+    }
+
+    private Bitmap drawableToBitmap(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+
+        int width = drawable.getIntrinsicWidth();
+        int height = drawable.getIntrinsicHeight();
+
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
+
+    private RecyclerView recyclerView;
+    private ImageAdapter imageAdapter;
+
+    Bundle bundles;
+    Bundle extras;
+    RecyclerView recyclerView1;
+
+    @Override
+    public void onResume() {
+
+        super.onResume();
+
+
+    }
+
+    LinearLayout linset;
+    private ElegantNumberButton blurNumber;
+
+    @Override
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        Display display = getWindowManager().getDefaultDisplay();
+        width = display.getWidth();
+        height = display.getHeight();
+        setContentView(R.layout.scrap_edit_create_collage_activity);
+        lins_sub = findViewById(R.id.sub_tools);
+        bundles = bundle;
+        isScrapBook = false;
+        tab_Layout = findViewById(R.id.tabLayout11);
+        view_Pager = findViewById(R.id.viewPager11);
+        main_act = ScrapCreateCollageActivity.this;
+        getStickerData();
+        recyclerView1 = findViewById(R.id.recyclerViewColor);
+        seek_border = findViewById(R.id.border_seek);
+        extras = getIntent().getExtras();
+        int arraySize = getCollageSize(extras);
+        lin_sticker = findViewById(R.id.sublinear111);
+        sub_edit = findViewById(R.id.sub_editor);
+        sub_edit.bringToFront();
+        new BitmapWorkerTask().execute(extras, bundle);
+        linset = findViewById(R.id.lin_set);
+        TextView rtv_tv = findViewById(R.id.tv_progress);
+
+
+        seek_border.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Utils.progress = progress + 20;
+                rtv_tv.setText(String.valueOf(progress));
+
+                if (Utils.colors == 0) {
+                    Utils.colors = Color.parseColor("#FFFFFF");
+                }
+                new BitmapWorkerTaskk().execute(extras, bundles);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+
+        recyclerView = findViewById(R.id.recyclerView);
+        LinearLayoutManager layoutManagerr = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManagerr);
+
+
+        RecyclerView rec_bor_color = findViewById(R.id.rec_border_color);
+
+        LinearLayoutManager layoutManagert = new LinearLayoutManager(this);
+        layoutManagert.setOrientation(LinearLayoutManager.HORIZONTAL);
+        rec_bor_color.setLayoutManager(layoutManagert);
+
+        List<Integer> colorList = new ArrayList<>();
+        colorList.add(Color.parseColor("#E4E4E4"));
+        colorList.add(Color.parseColor("#000000"));
+        colorList.add(Color.parseColor("#ff1c1d21"));
+        colorList.add(Color.parseColor("#CC6666"));
+        colorList.add(Color.parseColor("#BC5D58"));
+        colorList.add(Color.parseColor("#FF5349"));
+        colorList.add(Color.parseColor("#FD5E53"));
+        colorList.add(Color.parseColor("#FD7C6E"));
+        colorList.add(Color.parseColor("#FDBCB4"));
+        colorList.add(Color.parseColor("#FF6E4A"));
+        colorList.add(Color.parseColor("#FFA089"));
+        colorList.add(Color.parseColor("#EA7E5D"));
+        colorList.add(Color.parseColor("#B4674D"));
+        colorList.add(Color.parseColor("#A5694F"));
+        colorList.add(Color.parseColor("#FF7538"));
+        colorList.add(Color.parseColor("#FF7F49"));
+        colorList.add(Color.parseColor("#DD9475"));
+        colorList.add(Color.parseColor("#FF8243"));
+        colorList.add(Color.parseColor("#FFA474"));
+        colorList.add(Color.parseColor("#9F8170"));
+        colorList.add(Color.parseColor("#CD9575"));
+        colorList.add(Color.parseColor("#EFCDB8"));
+        colorList.add(Color.parseColor("#D68A59"));
+        colorList.add(Color.parseColor("#DEAA88"));
+        colorList.add(Color.parseColor("#FAA76C"));
+        colorList.add(Color.parseColor("#FFCFAB"));
+
+        ColorAdapter colorAdapter = new ColorAdapter(colorList, color -> {
+
+            if (Utils.progress == 0) {
+                Utils.progress = 20;
+                Utils.colors = color;
+                new BitmapWorkerTaskk().execute(extras, bundles);
+            } else {
+                Utils.colors = color;
+                new BitmapWorkerTaskk().execute(extras, bundles);
+            }
+
+        });
+
+        rec_bor_color.setAdapter(colorAdapter);
+
+
+        List<Integer> imageList = new ArrayList<>();
+        imageList.add(R.drawable.frame_1);
+        imageList.add(R.drawable.frame_2);
+        imageList.add(R.drawable.frame_3);
+        imageList.add(R.drawable.frame_4);
+        imageList.add(R.drawable.frame_5);
+
+
+        imageAdapter = new ImageAdapter(imageList, this::onImageClick);
+        recyclerView.setAdapter(imageAdapter);
+        LinearLayout lins_frame = findViewById(R.id.img_frames);
+        lins_frame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lins_sub.setVisibility(View.GONE);
+                LinearLayout lins_border = findViewById(R.id.lin_set);
+                lins_border.setVisibility(View.VISIBLE);
+
+
+            }
+        });
+
+
+        ImageView img_1 = findViewById(R.id.iv_close_txt222);
+        img_1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayout lins_border = findViewById(R.id.lin_set);
+                lins_border.setVisibility(View.GONE);
+            }
+        });
+        ImageView img_11 = findViewById(R.id.iv_apply_txt222);
+        img_11.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayout lins_border = findViewById(R.id.lin_set);
+                lins_border.setVisibility(View.GONE);
+            }
+        });
+
+
+        TextView tvdd = findViewById(R.id.title);
+        tvdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Drawable borderDrawable = getResources().getDrawable(R.drawable.none);
+
+
+                addBorderToBitmaps(bitmapList, borderDrawable);
+            }
+        });
+
+
+        borderWidth = 0;
+        borderColor = Color.WHITE;
+
+
+        ImageView img_dones = findViewById(R.id.backk);
+        img_dones.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayout lin_sticker = findViewById(R.id.sublinear111);
+                lin_sticker.setVisibility(View.GONE);
+            }
+        });
+        ImageView img_doness = findViewById(R.id.closed);
+        img_doness.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayout lin_sticker = findViewById(R.id.sublinear111);
+                lin_sticker.setVisibility(View.GONE);
+            }
+        });
+        LinearLayout lin_open_sub = findViewById(R.id.adjusts);
+        lin_open_sub.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                HorizontalScrollView horizontalScrollViews = findViewById(R.id.collage_ratio_horizontalScrollView);
+                horizontalScrollViews.setVisibility(View.GONE);
+                RecyclerView recyclerViewColor = (RecyclerView) findViewById(R.id.recyclerViewColor);
+                recyclerViewColor.setVisibility(View.GONE);
+                LinearLayout linedtit = findViewById(R.id.add_text);
+                linedtit.setVisibility(View.GONE);
+                if (sub_edit.getVisibility() == View.VISIBLE) {
+                    sub_edit.setVisibility(View.GONE);
+                } else {
+                    sub_edit.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+
+        ImageView img_close = findViewById(R.id.iv_close_txt2);
+        img_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sub_edit.setVisibility(View.GONE);
+                lins_sub.setVisibility(View.GONE);
+            }
+        });
+
+        ImageView iv_close_txt22 = findViewById(R.id.iv_close_txt22);
+        iv_close_txt22.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lins_sub.setVisibility(View.GONE);
+            }
+        });
+
+        ImageView iv_apply_txt22 = findViewById(R.id.iv_apply_txt22);
+        iv_apply_txt22.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lins_sub.setVisibility(View.GONE);
+            }
+        });
+
+
+        ImageView img_close2 = findViewById(R.id.iv_apply_txt2);
+        img_close2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sub_edit.setVisibility(View.GONE);
+                lins_sub.setVisibility(View.GONE);
+            }
+        });
+
+
+        ImageView img_close22 = findViewById(R.id.iv_close_txt);
+        img_close22.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayout ly_text = findViewById(R.id.ly_text);
+                ly_text.setVisibility(View.GONE);
+                lins_sub.setVisibility(View.GONE);
+                LinearLayout lins = findViewById(R.id.ly_alignment);
+                lins.setVisibility(View.GONE);
+            }
+        });
+
+
+        ImageView img_close23 = findViewById(R.id.iv_apply_txt);
+        img_close23.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayout ly_text = findViewById(R.id.ly_text);
+                ly_text.setVisibility(View.GONE);
+                lins_sub.setVisibility(View.GONE);
+                LinearLayout lins = findViewById(R.id.ly_alignment);
+                lins.setVisibility(View.GONE);
+            }
+        });
+
+        LinearLayout linnnnn = findViewById(R.id.new_lin);
+        linnnnn.bringToFront();
+
+
+        ImageView img_back = findViewById(R.id.button_cancel_collage_image);
+        img_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(ScrapCreateCollageActivity.this, R.style.TransparentDialog);
+                bottomSheetDialog.setContentView(R.layout.bottomsheet_exit);
+                bottomSheetDialog.setCanceledOnTouchOutside(false);
+                bottomSheetDialog.show();
+
+
+                LinearLayout lin1 = bottomSheetDialog.findViewById(R.id.exit_v);
+                LinearLayout lin2 = bottomSheetDialog.findViewById(R.id.not_v);
+
+                lin1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        photocreation.camera.blurcamera.Utils.Utils.preventTwoClick(v);
+                        photocreation.camera.blurcamera.Utils.Utils.reset = false;
+                        photocreation.camera.blurcamera.Utils.Utils.greybitmap = false;
+                        photocreation.camera.blurcamera.Utils.Utils.b6 = true;
+                        photocreation.camera.blurcamera.Utils.Utils.gallery = false;
+                        photocreation.camera.blurcamera.Utils.Utils.isGallery = false;
+                        photocreation.camera.blurcamera.Utils.Utils.mosaicbitmao = false;
+                        photocreation.camera.blurcamera.Utils.Utils.radialblur = false;
+                        photocreation.camera.blurcamera.Utils.Utils.horizpntalblur = false;
+
+                        bottomSheetDialog.dismiss();
+                        Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                        startActivity(intent);
+                        finish();
+
+                    }
+
+                });
+
+                lin2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        photocreation.camera.blurcamera.Utils.Utils.preventTwoClick(v);
+                        bottomSheetDialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        ImageView donsss = findViewById(R.id.button_save_collage_image);
+        donsss.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    main_act.sticker.setControlItemsHidden(true);
+                } catch (Exception e) {
+
+                }
+                recyclerView.setVisibility(View.GONE);
+                LinearLayout linedtit = findViewById(R.id.add_text);
+                linedtit.setVisibility(View.GONE);
+                LinearLayout lin_sticker = findViewById(R.id.sublinear111);
+                lin_sticker.setVisibility(View.GONE);
+                setSelectedTab(INDEX_COLLAGE_INVISIBLE_VIEW);
+
+
+                sub_edit.setVisibility(View.GONE);
+
+                stickerView.setIcons(Arrays.asList(new BitmapStickerIcon[]{}));
+                stickerView.setBackgroundColor(0);
+                stickerView.setLocked(true);
+                stickerView.setConstrained(true);
+
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        int btmWidth = (int) (((float) width) * collageView.sb_xscale);
+                        int btmHeight = (int) (((float) width) * collageView.sb_yscale);
+
+                        Bitmap capturedBitmap = captureView(stickerView, btmWidth, btmHeight);
+
+                        saveBitmapAsImage(capturedBitmap);
+
+                    }
+                }, 2500);
+
+
+            }
+        });
+
+
+        activityDocumentEditor = this;
+        defaultAlign = Layout.Alignment.ALIGN_CENTER;
+        defaultTxtColor = getResources().getColor(R.color.txt_color);
+
+        stickerView = (com.xiaopo.flying.sticker.StickerView) findViewById(R.id.stickerView);
+        stickerView.bringToFront();
+        rv_font = (RecyclerView) findViewById(R.id.rv_font);
+        rl_txt_color = (RelativeLayout) findViewById(R.id.rl_txt_color);
+        sb_txt_color = (ColorSeekBar) findViewById(R.id.sb_txt_color);
+        ly_alignment = (LinearLayout) findViewById(R.id.ly_alignment);
+
+
+        stickerView.removeAllStickers();
+
+
+        ImageView imgbold = (ImageView) findViewById(R.id.iv_bold);
+        imgbold.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isbold) {
+                    imgbold.setImageResource(R.drawable.sstic_bold);
+                    if (isitalic) {
+                        ChangeTextAlignment(Typeface.create(defaultFont, Typeface.ITALIC), defaultAlign);
+                        isbold = false;
+                        return;
+                    }
+                    ChangeTextAlignment(defaultFont, defaultAlign);
+                    isbold = false;
+                    return;
+                }
+                if (isitalic) {
+                    ChangeTextAlignment(Typeface.create(defaultFont, Typeface.BOLD_ITALIC), defaultAlign);
+                    isbold = true;
+                    return;
+                }
+                ChangeTextAlignment(Typeface.create(defaultFont, Typeface.BOLD), defaultAlign);
+                isbold = true;
+            }
+        });
+
+        ImageView iv_italic = (ImageView) findViewById(R.id.iv_italic);
+        iv_italic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (isitalic) {
+                    iv_italic.setImageResource(R.drawable.sstic_italic);
+                    if (isbold) {
+                        ChangeTextAlignment(Typeface.create(defaultFont, Typeface.BOLD), defaultAlign);
+                        isitalic = false;
+                        return;
+                    }
+                    ChangeTextAlignment(defaultFont, defaultAlign);
+                    isitalic = false;
+                    return;
+                }
+
+
+                if (isbold) {
+                    ChangeTextAlignment(Typeface.create(defaultFont, Typeface.BOLD_ITALIC), defaultAlign);
+                    isitalic = true;
+                    return;
+                }
+                ChangeTextAlignment(Typeface.create(defaultFont, Typeface.ITALIC), defaultAlign);
+                isitalic = true;
+            }
+        });
+
+        ImageView iv_align_left = findViewById(R.id.iv_align_left);
+        iv_align_left.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isbold = false;
+                isitalic = false;
+                defaultAlign = Layout.Alignment.ALIGN_NORMAL;
+                ChangeTextSticker(defaultTxtColor, ScrapCreateCollageActivity.this, stickerView);
+            }
+        });
+
+        ImageView iv_align_center = findViewById(R.id.iv_align_center);
+        iv_align_center.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isbold = false;
+                isitalic = false;
+                defaultAlign = Layout.Alignment.ALIGN_CENTER;
+                ChangeTextSticker(defaultTxtColor, ScrapCreateCollageActivity.this, stickerView);
+            }
+        });
+
+
+        ImageView iv_align_right = findViewById(R.id.iv_align_right);
+        iv_align_right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isbold = false;
+                isitalic = false;
+                defaultAlign = Layout.Alignment.ALIGN_OPPOSITE;
+                ChangeTextSticker(defaultTxtColor, ScrapCreateCollageActivity.this, stickerView);
+            }
+        });
+
+
+        ImageView aligment = findViewById(R.id.iv_txt_alignment);
+        aligment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rl_txt_color.setVisibility(View.GONE);
+                ly_alignment.setVisibility(View.VISIBLE);
+                rv_font.setVisibility(View.GONE);
+            }
+        });
+
+
+        ImageView img_font = findViewById(R.id.iv_txt_font);
+        img_font.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList arrayList = new ArrayList(getAssertFile("fonts"));
+                rv_font.setHasFixedSize(true);
+                rv_font.setLayoutManager(new LinearLayoutManager(ScrapCreateCollageActivity.this, RecyclerView.HORIZONTAL, false));
+                adptFont = new AdptFontt(ScrapCreateCollageActivity.this, arrayList);
+                rv_font.setAdapter(adptFont);
+                rv_font.setAdapter(adptFont);
+                rv_font.setVisibility(View.VISIBLE);
+                rl_txt_color.setVisibility(View.GONE);
+                ly_alignment.setVisibility(View.GONE);
+            }
+        });
+
+        ImageView img_color = findViewById(R.id.iv_txt_color);
+        img_color.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ly_alignment.setVisibility(View.GONE);
+                rl_txt_color.setVisibility(View.VISIBLE);
+                rv_font.setVisibility(View.GONE);
+            }
+        });
+
+        sb_txt_color.setOnColorChangeListener(new ColorSeekBar.OnColorChangeListener() {
+            @Override
+            public void onColorChangeListener(int i) {
+                defaultTxtColor = i;
+                activityDocumentEditor.ChangeTextSticker(defaultTxtColor, activityDocumentEditor, activityDocumentEditor.stickerView);
+            }
+        });
+
+        LinearLayout lins_delate = findViewById(R.id.img_delates);
+        lins_delate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createDeleteDialog();
+            }
+        });
+
+
+        seekBarRound = (SeekBar) findViewById(R.id.seekbar_round);
+        seekBarRound.setOnSeekBarChangeListener(mSeekBarListener);
+        seekBarPadding = (SeekBar) findViewById(R.id.seekbar_padding);
+        seekBarPadding.setOnSeekBarChangeListener(mSeekBarListener);
+        seekbarSize = (SeekBar) findViewById(R.id.seekbar_size);
+        seekbarSize.setOnSeekBarChangeListener(mSeekBarListener);
+        seekbarBlur = (SeekBar) findViewById(R.id.seekbar_collage_blur);
+        seekbarBlur.setOnSeekBarChangeListener(mSeekBarListener);
+        final RecyclerView recyclerViewColor = (RecyclerView) findViewById(R.id.recyclerViewColor);
+        edit_recyclerViewCollage = (RecyclerView) findViewById(R.id.recyclerViewCollage);
+        recyclerViewColor.bringToFront();
+        LinearLayout lin_bg = findViewById(R.id.background);
+        lin_bg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayout lins_border = findViewById(R.id.lin_set);
+                lins_border.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
+                sub_edit.setVisibility(View.GONE);
+                lins_sub.setVisibility(View.GONE);
+                LinearLayout lin_sticker = findViewById(R.id.sublinear111);
+                lin_sticker.setVisibility(View.GONE);
+                HorizontalScrollView horizontalScrollViews = findViewById(R.id.collage_ratio_horizontalScrollView);
+                horizontalScrollViews.setVisibility(View.GONE);
+                recyclerViewColor.setVisibility(View.VISIBLE);
+            }
+        });
+
+        LinearLayout linborder = findViewById(R.id.frames);
+        linborder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayout lins_border = findViewById(R.id.lin_set);
+                lins_border.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
+                lins_sub.setVisibility(View.GONE);
+                LinearLayout lin_sticker = findViewById(R.id.sublinear111);
+                lin_sticker.setVisibility(View.GONE);
+                HorizontalScrollView horizontalScrollViews = findViewById(R.id.collage_ratio_horizontalScrollView);
+                horizontalScrollViews.setVisibility(View.GONE);
+                sub_edit.setVisibility(View.GONE);
+                RecyclerView recyclerViewColor = (RecyclerView) findViewById(R.id.recyclerViewColor);
+                recyclerViewColor.setVisibility(View.GONE);
+                LinearLayout ly_text = findViewById(R.id.ly_text);
+                ly_text.setVisibility(View.VISIBLE);
+                addTextDialog("", false);
+
+            }
+        });
+
+        int colorDefault = getResources().getColor(R.color.white);
+        int colorSelected = getResources().getColor(R.color.white);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(ScrapCreateCollageActivity.this);
+        layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        edit_recyclerViewCollage.setLayoutManager(layoutManager);
+
+        edit_collageAdapter = new CollageImageAdapter(SB_Collage.collageIconArray[arraySize - 1], new CollageImageAdapter.CurrentCollageIndexChangedListener() {
+            @Override
+            public void onIndexChanged(int i) {
+                collageView.setCurrentCollageIndex(i);
+            }
+        }, colorDefault, colorSelected, false, true);
+        edit_recyclerViewCollage.setAdapter(edit_collageAdapter);
+        edit_recyclerViewCollage.setItemAnimator(new DefaultItemAnimator());
+        viewFlipper = (ViewFlipper) findViewById(R.id.collage_view_flipper);
+        viewFlipper.setDisplayedChild(5);
+        createAdapterList(colorDefault, colorSelected);
+        RecyclerView recyclerViewPattern = (RecyclerView) findViewById(R.id.recyclerViewPattern);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ScrapCreateCollageActivity.this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        colorContainer = (LinearLayout) findViewById(R.id.color_container);
+        recyclerViewPattern.setLayoutManager(linearLayoutManager);
+        recyclerViewPattern.setAdapter(new CollageImageAdapter(Utils.patternResIdList3, new CollageImageAdapter.CurrentCollageIndexChangedListener() {
+            @Override
+            public void onIndexChanged(int position) {
+                collageView.sb_backgroundMode = ScrapCreateCollageActivity.INDEX_COLLAGE;
+                if (position == 0) {
+                    collageView.setPatternPaint(-1);
+                    return;
+                }
+                int newPos = position - 1;
+                if (patternAdapterList.get(newPos) != recyclerViewColor.getAdapter()) {
+                    recyclerViewColor.setAdapter(patternAdapterList.get(newPos));
+                    (patternAdapterList.get(newPos)).setSelectedPositinVoid();
+                } else {
+                    (patternAdapterList.get(newPos)).setSelectedPositinVoid();
+                    (patternAdapterList.get(newPos)).notifyDataSetChanged();
+                }
+                colorContainer.setVisibility(View.VISIBLE);
+            }
+        }, colorDefault, colorSelected, false, false));
+        recyclerViewPattern.setItemAnimator(new DefaultItemAnimator());
+        LinearLayoutManager layoutManagerColor = new LinearLayoutManager(ScrapCreateCollageActivity.this);
+        layoutManagerColor.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recyclerViewColor.setLayoutManager(layoutManagerColor);
+        recyclerViewColor.setAdapter(new ColorPickerAdapter(new CollageImageAdapter.CurrentCollageIndexChangedListener() {
+            @Override
+            public void onIndexChanged(int color) {
+                collageView.setPatternPaintColor(color);
+
+            }
+        }, colorDefault, colorSelected));
+        recyclerViewColor.setItemAnimator(new DefaultItemAnimator());
+
+        LinearLayout lis_sticker = findViewById(R.id.sticker_lin);
+        lis_sticker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerView.setVisibility(View.GONE);
+                lins_sub.setVisibility(View.GONE);
+
+                LinearLayout mains = findViewById(R.id.sublinear111);
+
+                if (mains.getVisibility() == View.VISIBLE) {
+                    mains.setVisibility(View.GONE);
+                } else {
+                    mains.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+
+    }
+
+
+    public Bitmap captureView(View view, int width, int height) {
+        view.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        int measuredWidth = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
+        int measuredHeight = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
+        view.measure(measuredWidth, measuredHeight);
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+        view.draw(canvas);
+        view.setDrawingCacheEnabled(false);
+        return bitmap;
+    }
+
+    OnSeekBarChangeListener mSeekBarListener = new OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+            int id = seekBar.getId();
+            if (id == R.id.seekbar_round) {
+                if (collageView != null) {
+                    collageView.setCornerRadius((float) progress);
+                }
+            } else if (id == R.id.seekbar_padding) {
+                if (collageView != null) {
+                    collageView.setPathPadding(collageView.currentCollageIndex, (float) progress);
+                }
+            } else if (id == R.id.seekbar_size) {
+                if (collageView != null) {
+                    collageView.setCollageSize(collageView.sb_sizeMatrix, progress);
+                }
+            } else if (id == R.id.seekbar_collage_blur) {
+                float f = ((float) progress) / 4.0f;
+            }
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            if (seekBar.getId() == R.id.seekbar_collage_blur) {
+                float radius = ((float) seekBar.getProgress()) / 4.0f;
+                if (radius > 25f) {
+                    radius = 25f;
+                }
+                if (radius < 0.0f) {
+                    radius = 0.0f;
+                }
+                Log.e(ScrapCreateCollageActivity.TAG, "blur radius " + radius);
+                collageView.setBlurBitmap((int) radius, false);
+            }
+        }
+    };
+
+
+    private void createAdapterList(int colorDefault, int colorSelected) {
+        int size = Utils.patternResIdList2.length;
+        patternAdapterList.clear();
+        patternAdapterList.add(new ColorPickerAdapter(new CollageImageAdapter.CurrentCollageIndexChangedListener() {
+            @Override
+            public void onIndexChanged(int color) {
+
+                collageView.setPatternPaintColor(color);
+            }
+        }, colorDefault, colorSelected));
+        for (int i = INDEX_COLLAGE; i < size; i += INDEX_COLLAGE_BACKGROUND) {
+            patternAdapterList.add(new CollageImageAdapter(Utils.patternResIdList2[i], new CollageImageAdapter.CurrentCollageIndexChangedListener() {
+                public void onIndexChanged(int positionOrColor) {
+                    collageView.setPatternPaint(positionOrColor);
+                }
+            }, colorDefault, colorSelected, true, true));
+        }
+    }
+
+    int getCollageSize(Bundle extras) {
+        long[] selectedImageList = extras.getLongArray("photo_id_list");
+        if (selectedImageList == null) {
+            return 1;
+        }
+        return selectedImageList.length;
+    }
+
+    int borderWidth;
+    int borderColor;
+
+    class BitmapWorkerTaskk extends AsyncTask<Bundle, Void, Void> {
+        int arraySize;
+        Bundle data;
+        ProgressDialog progressDialog;
+        Bundle savedInstanceState;
+
+        BitmapWorkerTaskk() {
+        }
+
+        protected void onPreExecute() {
+        /*    progressDialog = new ProgressDialog(ScrapCreateCollageActivity.this);
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage("loading images!");
+            progressDialog.show();*/
+        }
+
+        protected Void doInBackground(Bundle... params) {
+            int i;
+            data = params[0];
+            savedInstanceState = params[1];
+            isScrapBook = data.getBoolean("is_scrap_book", false);
+            long[] selectedImageList = data.getLongArray("photo_id_list");
+            int[] selectedImageOrientationList = data.getIntArray("photo_orientation_list");
+            arraySize = 0;
+            int maxDivider;
+            if (selectedImageList == null) {
+                String selectedImagePath = data.getString("selected_image_path");
+                if (selectedImagePath != null) {
+                    arraySize = 1;
+                    bitmapList = new Bitmap[arraySize];
+                    maxDivider = arraySize;
+                    if (maxDivider < 3) {
+                        maxDivider = 3;
+                    }
+                    bitmapList[0] = Utils.decodeFile(selectedImagePath, Utility.maxSizeForDimension(ScrapCreateCollageActivity.this, maxDivider, UPPER_SIZE_FOR_LOAD), isScrapBook);
+                }
+            } else {
+                arraySize = selectedImageList.length;
+                bitmapList = new Bitmap[arraySize];
+                maxDivider = arraySize;
+                if (maxDivider < 3) {
+                    maxDivider = 3;
+                }
+                int requiredSize = Utility.maxSizeForDimension(ScrapCreateCollageActivity.this, maxDivider, UPPER_SIZE_FOR_LOAD);
+                int loadingImageError = 0;
+                for (i = ScrapCreateCollageActivity.INDEX_COLLAGE; i < arraySize; i += ScrapCreateCollageActivity.INDEX_COLLAGE_BACKGROUND) {
+                    Bitmap bitmap = Utils.getScaledBitmapFromId(ScrapCreateCollageActivity.this, selectedImageList[i], selectedImageOrientationList[i], requiredSize, isScrapBook);
+                    if (bitmap != null) {
+                        bitmapList[i] = bitmap;
+                    } else {
+                        loadingImageError += ScrapCreateCollageActivity.INDEX_COLLAGE_BACKGROUND;
+                    }
+                }
+                if (loadingImageError > 0) {
+                    int newSize = arraySize - loadingImageError;
+                    Bitmap[] arr = new Bitmap[newSize];
+                    int j = 0;
+                    for (i = 0; i < arraySize; i++) {
+                        if (bitmapList[i] != null) {
+                            arr[j] = bitmapList[i];
+                            j += 1;
+                        }
+                    }
+                    arraySize = newSize;
+                    bitmapList = arr;
+                }
+            }
+            parameterList = new Parameter[arraySize];
+            for (i = 0; i < parameterList.length; i++) {
+                parameterList[i] = new Parameter();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            borderWidth = 20;
+            borderColor = Color.BLACK;
+            setBitmaps();
+
+
+
+
+
+
+
+
+         /*   Drawable backgroundDrawable = getResources().getDrawable(R.drawable.drop_shadow); // Replace with your drawable resource
+
+            for (int i = 0; i < bitmapList.length; i++) {
+                Bitmap bitmap = bitmapList[i]; // Get the current bitmap from the list
+
+                // Create a new Bitmap with the same dimensions as the original
+                Bitmap newBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
+
+                // Create a canvas with the newBitmap
+                Canvas canvas = new Canvas(newBitmap);
+
+                // Draw the background drawable onto the canvas
+                backgroundDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+                backgroundDrawable.draw(canvas);
+
+                // Draw the original bitmap on top of the background
+                canvas.drawBitmap(bitmap, 0, 0, null);
+
+                // Replace the original bitmap in the list with the newBitmap
+                bitmapList[i] = newBitmap;
+            }
+
+*/
+
+
+
+
+
+            if (arraySize <= 0) {
+                Toast msg = Toast.makeText(ScrapCreateCollageActivity.this, "Couldn't load images!", Toast.LENGTH_SHORT);
+                msg.setGravity(17, msg.getXOffset() / ScrapCreateCollageActivity.INDEX_COLLAGE_SPACE, msg.getYOffset() / ScrapCreateCollageActivity.INDEX_COLLAGE_SPACE);
+                msg.show();
+                finish();
+                return;
+            }
+            if (SB_Collage.collageIconArray[bitmapList.length - 1] != edit_collageAdapter.scrap_iconList) {
+                edit_collageAdapter.setData(SB_Collage.collageIconArray[bitmapList.length - 1]);
+                edit_collageAdapter.notifyDataSetChanged();
+                Log.e(ScrapCreateCollageActivity.TAG, "change premium icons");
+            }
+            if (isScrapBook) {
+                btmDelete = BitmapFactory.decodeResource(getResources(), R.drawable.icon_delete_sub);
+                btmScale = BitmapFactory.decodeResource(getResources(), R.drawable.icon_resize_sub);
+            }
+            if (isScrapBook) {
+                npd = (NinePatchDrawable) ContextCompat.getDrawable(ScrapCreateCollageActivity.this, R.drawable.shadow_7);
+                Log.e(ScrapCreateCollageActivity.TAG, "ndp width " + npd.getMinimumHeight());
+            }
+            collageView = new Scrap_CollageView(ScrapCreateCollageActivity.this, width, height);
+            mainLayout = (RelativeLayout) findViewById(R.id.collage_main_layout);
+            mainLayout.bringToFront();
+            mainLayout.addView(collageView);
+            viewFlipper.bringToFront();
+            if (arraySize == ScrapCreateCollageActivity.INDEX_COLLAGE_BACKGROUND) {
+                setVisibilityForSingleImage();
+            }
+            if (isScrapBook) {
+                setVisibilityForScrapbook();
+            }
+            viewFlipper = (ViewFlipper) findViewById(R.id.collage_view_flipper);
+            viewFlipper.bringToFront();
+            findViewById(R.id.collage_footer).bringToFront();
+            findViewById(R.id.collage_header).bringToFront();
+            contextFooter = (ViewGroup) findViewById(R.id.collage_context_menu);
+            contextFooter.bringToFront();
+            LinearLayout linxxx = findViewById(R.id.collage_footer);
+            linxxx.bringToFront();
+            LinearLayout linxxx22 = findViewById(R.id.mainssss);
+
+            linxxx22.bringToFront();
+            selectSwapTextView = findViewById(R.id.select_image_swap);
+            selectSwapTextView.bringToFront();
+            selectSwapTextView.setVisibility(View.INVISIBLE);
+            selectFilterTextView = findViewById(R.id.select_image_filter);
+            selectFilterTextView.bringToFront();
+            selectFilterTextView.setVisibility(View.INVISIBLE);
+        }
+    }
+
+
+    private void setBitmaps() {
+
+
+        for (int i = 0; i < Utils.bitmapListtt.length; i++) {
+            try {
+                Bitmap bitmap = Utils.bitmapListtt[i];
+                int width = bitmap.getWidth();
+                int height = bitmap.getHeight();
+                Bitmap resultBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+                Canvas canvas = new Canvas(resultBitmap);
+                canvas.drawBitmap(bitmap, 0, 0, null);
+                Paint borderPaint = new Paint();
+                borderPaint.setColor(Utils.colors);
+                borderPaint.setStyle(Paint.Style.STROKE);
+                borderPaint.setStrokeWidth(Utils.progress);
+                canvas.drawRect(0, 0, width, height, borderPaint);
+                bitmapList[i] = resultBitmap;
+            } catch (Exception e) {
+                Toast.makeText(ScrapCreateCollageActivity.this, "Loading...", Toast.LENGTH_SHORT).show();
+
+            }
+
+        }
+
+    }
+
+    class BitmapWorkerTask extends AsyncTask<Bundle, Void, Void> {
+        int arraySize;
+        Bundle data;
+        ProgressDialog progressDialog;
+        Bundle savedInstanceState;
+
+        BitmapWorkerTask() {
+
+        }
+
+        protected void onPreExecute() {
+            progressDialog = new ProgressDialog(ScrapCreateCollageActivity.this);
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage("loading images!");
+            progressDialog.show();
+        }
+
+        protected Void doInBackground(Bundle... params) {
+            int i;
+            data = params[0];
+            savedInstanceState = params[1];
+            isScrapBook = data.getBoolean("is_scrap_book", false);
+            long[] selectedImageList = data.getLongArray("photo_id_list");
+            int[] selectedImageOrientationList = data.getIntArray("photo_orientation_list");
+
+            arraySize = 0;
+            int maxDivider;
+            if (selectedImageList == null) {
+                String selectedImagePath = data.getString("selected_image_path");
+                if (selectedImagePath != null) {
+                    arraySize = 1;
+                    bitmapList = new Bitmap[arraySize];
+                    maxDivider = arraySize;
+                    if (maxDivider < 3) {
+                        maxDivider = 3;
+                    }
+                    bitmapList[0] = Utils.decodeFile(selectedImagePath, Utility.maxSizeForDimension(ScrapCreateCollageActivity.this, maxDivider, UPPER_SIZE_FOR_LOAD), isScrapBook);
+                }
+            } else {
+                arraySize = selectedImageList.length;
+                bitmapList = new Bitmap[arraySize];
+                maxDivider = arraySize;
+
+                if (maxDivider < 3) {
+                    maxDivider = 3;
+                }
+                Utils.bitmapListtt = bitmapList;
+                int requiredSize = Utility.maxSizeForDimension(ScrapCreateCollageActivity.this, maxDivider, UPPER_SIZE_FOR_LOAD);
+                int loadingImageError = 0;
+                for (i = ScrapCreateCollageActivity.INDEX_COLLAGE; i < arraySize; i += ScrapCreateCollageActivity.INDEX_COLLAGE_BACKGROUND) {
+                    Bitmap bitmap = Utils.getScaledBitmapFromId(ScrapCreateCollageActivity.this, selectedImageList[i], selectedImageOrientationList[i], requiredSize, isScrapBook);
+                    if (bitmap != null) {
+                        bitmapList[i] = bitmap;
+                    } else {
+                        loadingImageError += ScrapCreateCollageActivity.INDEX_COLLAGE_BACKGROUND;
+                    }
+                }
+                if (loadingImageError > 0) {
+                    int newSize = arraySize - loadingImageError;
+                    Bitmap[] arr = new Bitmap[newSize];
+                    int j = 0;
+                    for (i = 0; i < arraySize; i++) {
+                        if (bitmapList[i] != null) {
+                            arr[j] = bitmapList[i];
+                            j += 1;
+                        }
+                    }
+                    arraySize = newSize;
+                    bitmapList = arr;
+                }
+            }
+            parameterList = new Parameter[arraySize];
+            for (i = 0; i < parameterList.length; i++) {
+                parameterList[i] = new Parameter();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+
+            Bitmap[] bitmapList = activityDocumentEditor.bitmapList;
+//
+//            Drawable backgroundDrawable = getResources().getDrawable(R.drawable.bg_shado);
+//            Bitmap backgroundBitmap = ((BitmapDrawable) backgroundDrawable).getBitmap();
+//
+//// Step 2: Iterate through the Bitmap array and set the background
+//            for (int i = 0; i < bitmapList.length; i++) {
+//                Bitmap originalBitmap = bitmapList[i];
+//
+//                // Create a new Bitmap with the background
+//                Bitmap combinedBitmap = Bitmap.createBitmap(
+//                        backgroundBitmap.getWidth(), backgroundBitmap.getHeight(), Bitmap.Config.ARGB_8888
+//                );
+//
+//                // Create a Canvas to draw on the combinedBitmap
+//                Canvas canvas = new Canvas(combinedBitmap);
+//
+//                // Draw the backgroundBitmap
+//                canvas.drawBitmap(backgroundBitmap, 0, 0, null);
+//
+//                // Draw the originalBitmap on top of the background
+//                canvas.drawBitmap(originalBitmap, 0, 0, null);
+//
+//                // Replace the original Bitmap with the modified one in the array
+//                bitmapList[i] = combinedBitmap;
+//            }
+
+     /*       Drawable drawable1 = getResources().getDrawable(R.drawable.blur_1);
+            Bitmap bitmap1 = Bitmap.createBitmap(drawable1.getIntrinsicWidth(), drawable1.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas1 = new Canvas(bitmap1);
+            drawable1.setBounds(0, 0, canvas1.getWidth(), canvas1.getHeight());
+            drawable1.draw(canvas1);
+            bitmapList[0] = bitmap1;*/
+
+
+            try {
+                progressDialog.dismiss();
+            } catch (Exception e) {
+            }
+            if (arraySize <= 0) {
+                Toast msg = Toast.makeText(ScrapCreateCollageActivity.this, "Couldn't load images!", Toast.LENGTH_SHORT);
+                msg.setGravity(17, msg.getXOffset() / ScrapCreateCollageActivity.INDEX_COLLAGE_SPACE, msg.getYOffset() / ScrapCreateCollageActivity.INDEX_COLLAGE_SPACE);
+                msg.show();
+                finish();
+                return;
+            }
+            if (SB_Collage.collageIconArray[bitmapList.length - 1] != edit_collageAdapter.scrap_iconList) {
+                edit_collageAdapter.setData(SB_Collage.collageIconArray[bitmapList.length - 1]);
+                edit_collageAdapter.notifyDataSetChanged();
+                Log.e(ScrapCreateCollageActivity.TAG, "change premium icons");
+            }
+            if (isScrapBook) {
+                btmDelete = BitmapFactory.decodeResource(getResources(), R.drawable.icon_delete_sub);
+                btmScale = BitmapFactory.decodeResource(getResources(), R.drawable.icon_resize_sub);
+            }
+            if (isScrapBook) {
+                npd = (NinePatchDrawable) ContextCompat.getDrawable(ScrapCreateCollageActivity.this, R.drawable.shadow_7);
+                Log.e(ScrapCreateCollageActivity.TAG, "ndp width " + npd.getMinimumHeight());
+            }
+            collageView = new Scrap_CollageView(ScrapCreateCollageActivity.this, width, height);
+            mainLayout = (RelativeLayout) findViewById(R.id.collage_main_layout);
+            mainLayout.bringToFront();
+            mainLayout.addView(collageView);
+            viewFlipper.bringToFront();
+            if (arraySize == ScrapCreateCollageActivity.INDEX_COLLAGE_BACKGROUND) {
+                setVisibilityForSingleImage();
+            }
+            if (isScrapBook) {
+                setVisibilityForScrapbook();
+            }
+            viewFlipper = (ViewFlipper) findViewById(R.id.collage_view_flipper);
+            viewFlipper.bringToFront();
+            findViewById(R.id.collage_footer).bringToFront();
+            findViewById(R.id.collage_header).bringToFront();
+            contextFooter = (ViewGroup) findViewById(R.id.collage_context_menu);
+            contextFooter.bringToFront();
+            LinearLayout linxxx = findViewById(R.id.collage_footer);
+            linxxx.bringToFront();
+            LinearLayout linxxx22 = findViewById(R.id.mainssss);
+
+            linxxx22.bringToFront();
+            selectSwapTextView = findViewById(R.id.select_image_swap);
+            selectSwapTextView.bringToFront();
+            selectSwapTextView.setVisibility(View.INVISIBLE);
+            selectFilterTextView = findViewById(R.id.select_image_filter);
+            selectFilterTextView.bringToFront();
+            selectFilterTextView.setVisibility(View.INVISIBLE);
+        }
+    }
+
+
+    private void setVisibilityForScrapbook() {
+        findViewById(R.id.buttonCollageLayout).setVisibility(View.GONE);
+        findViewById(R.id.buttonSpace).setVisibility(View.GONE);
+        findViewById(R.id.buttonSwap).setVisibility(View.GONE);
+        findViewById(R.id.buttonFit).setVisibility(View.GONE);
+        findViewById(R.id.buttonCenter).setVisibility(View.GONE);
+        findViewById(R.id.buttonDelete).setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        try {
+            int i;
+            super.onDestroy();
+            if (bitmapList != null) {
+                for (i = INDEX_COLLAGE; i < bitmapList.length; i += INDEX_COLLAGE_BACKGROUND) {
+                    if (bitmapList[i] != null) {
+                        bitmapList[i].recycle();
+                    }
+                }
+            }
+            if (collageView != null) {
+
+                if (collageView.sb_shapeLayoutList != null) {
+                    for (i = INDEX_COLLAGE; i < collageView.sb_shapeLayoutList.size(); i += INDEX_COLLAGE_BACKGROUND) {
+                        for (int j = INDEX_COLLAGE; j < collageView.sb_shapeLayoutList.get(i).shapeArr.length; j += INDEX_COLLAGE_BACKGROUND) {
+                            if (collageView.sb_shapeLayoutList.get(i).shapeArr[j] != null) {
+                                collageView.sb_shapeLayoutList.get(i).shapeArr[j].freeBitmaps();
+                            }
+                        }
+                    }
+                }
+
+                if (collageView.sb_maskBitmapArray != null) {
+                    for (i = INDEX_COLLAGE; i < collageView.sb_maskBitmapArray.length; i += INDEX_COLLAGE_BACKGROUND) {
+                        if (collageView.sb_maskBitmapArray[i] != null) {
+                            if (!collageView.sb_maskBitmapArray[i].isRecycled()) {
+                                collageView.sb_maskBitmapArray[i].recycle();
+                            }
+                            collageView.sb_maskBitmapArray[i] = null;
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("show_text", showText);
+        outState.putSerializable("text_data", textDataList);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        showText = savedInstanceState.getBoolean("show_text");
+        textDataList = (ArrayList) savedInstanceState.getSerializable("text_data");
+        if (textDataList == null) {
+            textDataList = new ArrayList<>();
+        }
+        if (contextFooter == null) {
+            contextFooter = ((ViewGroup) findViewById(R.id.collage_context_menu));
+        }
+        if (contextFooter != null) {
+            contextFooter.bringToFront();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        recyclerView.setVisibility(View.GONE);
+        LinearLayout linedtit = findViewById(R.id.add_text);
+        linedtit.setVisibility(View.GONE);
+        sub_edit.setVisibility(View.GONE);
+        showdialog();
+    }
+
+    @SuppressLint("WrongConstant")
+    public void showdialog() {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(ScrapCreateCollageActivity.this, R.style.TransparentDialog);
+        bottomSheetDialog.setContentView(R.layout.bottomsheet_exit);
+        bottomSheetDialog.setCanceledOnTouchOutside(false);
+        bottomSheetDialog.show();
+        LinearLayout lin1 = bottomSheetDialog.findViewById(R.id.exit_v);
+        LinearLayout lin2 = bottomSheetDialog.findViewById(R.id.not_v);
+        lin1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                photocreation.camera.blurcamera.Utils.Utils.preventTwoClick(v);
+                photocreation.camera.blurcamera.Utils.Utils.reset = false;
+                photocreation.camera.blurcamera.Utils.Utils.greybitmap = false;
+                photocreation.camera.blurcamera.Utils.Utils.b6 = true;
+                photocreation.camera.blurcamera.Utils.Utils.gallery = false;
+                photocreation.camera.blurcamera.Utils.Utils.isGallery = false;
+                photocreation.camera.blurcamera.Utils.Utils.mosaicbitmao = false;
+                photocreation.camera.blurcamera.Utils.Utils.radialblur = false;
+                photocreation.camera.blurcamera.Utils.Utils.horizpntalblur = false;
+                bottomSheetDialog.dismiss();
+                Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                startActivity(intent);
+                finish();
+
+            }
+
+        });
+
+        lin2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                photocreation.camera.blurcamera.Utils.Utils.preventTwoClick(v);
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+
+    }
+
+    private void backButtonAlertBuilder() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ScrapCreateCollageActivity.this);
+        builder.setMessage("Would you like to save image ?").setCancelable(true).setPositiveButton("Yes", new OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                new SaveImageTask().execute();
+            }
+        }).setNegativeButton("Cancel", new OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+            }
+        }).setNeutralButton("No", new OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+
+                finish();
+            }
+        });
+        saveImageAlert = builder.create();
+        saveImageAlert.show();
+    }
+
+    private class SaveImageTask extends AsyncTask<Object, Object, Object> {
+        ProgressDialog progressDialog;
+        String resultPath;
+
+        private SaveImageTask() {
+            resultPath = null;
+        }
+
+        protected void onPreExecute() {
+            progressDialog = new ProgressDialog(ScrapCreateCollageActivity.this);
+            progressDialog.setMessage("Saving image...");
+            progressDialog.show();
+        }
+
+        protected Object doInBackground(Object... arg0) {
+            resultPath = collageView.saveBitmap(width, height);
+            return null;
+        }
+
+        protected void onPostExecute(Object result) {
+            super.onPostExecute(result);
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.cancel();
+            }
+            if (resultPath != null) {
+                Bitmap bitmap = BitmapFactory.decodeFile(resultPath);
+                saveBitmapAsImage(bitmap);
+            }
+            MyMediaScannerConnectionClient myMediaScannerConnectionClient = new MyMediaScannerConnectionClient(getApplicationContext(), new File(resultPath), null);
+
+        }
+    }
+
+    public void saveBitmapAsImage(Bitmap bitmap) {
+        try {
+            File externalStorageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            StringBuilder sb = new StringBuilder();
+            sb.append(externalStorageDirectory.getAbsolutePath());
+            sb.append("/");
+            sb.append("Blur Camera");
+            File directory = new File(sb.toString());
+            directory.mkdirs();
+            StringBuilder sb2 = new StringBuilder();
+            sb2.append(new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()));
+            sb2.append(".jpeg");
+            String fileName = sb2.toString();
+            File file = new File(directory, fileName);
+            file.renameTo(file);
+            StringBuilder sb3 = new StringBuilder();
+            sb3.append("file://");
+            sb3.append(externalStorageDirectory.getAbsolutePath());
+            sb3.append("/");
+            sb3.append("Blur Camera");
+            sb3.append("/");
+            sb3.append(fileName);
+            String final_pic_uri = sb3.toString();
+            FileOutputStream outputStream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            outputStream.flush();
+            outputStream.close();
+            MediaScannerConnection.scanFile(this, new String[]{file.getAbsolutePath()}, null, null);
+            photocreation.camera.blurcamera.Utils.Utils.final_url = final_pic_uri;
+            Log.d("cache uri=", final_pic_uri);
+            Bitmap bnnnn = uriToBitmap(final_pic_uri);
+            photocreation.camera.blurcamera.Utils.Utils.b = bnnnn;
+            startActivity(new Intent(getApplicationContext(), SaveActivity.class));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Bitmap uriToBitmap(String uriString) {
+        try {
+            Uri uri = Uri.parse(uriString);
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            return BitmapFactory.decodeStream(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private final class MyMediaScannerConnectionClient implements MediaScannerConnectionClient {
+        private MediaScannerConnection mConn;
+        private String mFilename;
+        private String mMimetype;
+
+        MyMediaScannerConnectionClient(Context ctx, File file, String mimetype) {
+            mFilename = file.getAbsolutePath();
+            mConn = new MediaScannerConnection(ctx, this);
+            mConn.connect();
+        }
+
+        public void onMediaScannerConnected() {
+            mConn.scanFile(mFilename, mMimetype);
+        }
+
+        public void onScanCompleted(String path, Uri uri) {
+            mConn.disconnect();
+        }
+    }
+
+    public void myClickHandler(View view) {
+        int id = view.getId();
+        if (id == R.id.buttonCollageLayout) {
+            setSelectedTab(INDEX_COLLAGE);
+        } else if (id == R.id.buttonRatio) {
+            LinearLayout lins_border = findViewById(R.id.lin_set);
+            lins_border.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
+            lins_sub.setVisibility(View.GONE);
+            LinearLayout lin_sticker = findViewById(R.id.sublinear111);
+            lin_sticker.setVisibility(View.GONE);
+            HorizontalScrollView horizontalScrollViews = findViewById(R.id.collage_ratio_horizontalScrollView);
+            horizontalScrollViews.setVisibility(View.VISIBLE);
+            RecyclerView recyclerViewColor = (RecyclerView) findViewById(R.id.recyclerViewColor);
+            recyclerViewColor.setVisibility(View.GONE);
+            sub_edit.setVisibility(View.GONE);
+            RecyclerView rec = findViewById(R.id.recyclerViewColor);
+            rec.setVisibility(View.GONE);
+            setSelectedTab(INDEX_COLLAGE_RATIO);
+        } else if (id == R.id.buttonBlur) {
+            collageView.setBlurBitmap(collageView.blurRadius, false);
+            setSelectedTab(INDEX_COLLAGE_BLUR);
+            collageView.startAnimator();
+        } else if (id == R.id.buttonBackground) {
+            RecyclerView rec = findViewById(R.id.recyclerViewColor);
+            rec.setVisibility(View.GONE);
+            lins_sub.setVisibility(View.GONE);
+
+            HorizontalScrollView horizontalScrollViews = findViewById(R.id.collage_ratio_horizontalScrollView);
+            horizontalScrollViews.setVisibility(View.GONE);
+            setSelectedTab(INDEX_COLLAGE_BACKGROUND);
+        } else if (id == R.id.buttonSpace) {
+            setSelectedTab(INDEX_COLLAGE_SPACE);
+        } else if (id == R.id.buttonAdjustment) {
+            if (collageView.sb_shapeLayoutList.get(INDEX_COLLAGE).shapeArr.length == INDEX_COLLAGE_BACKGROUND) {
+                collageView.sb_shapeIndex = INDEX_COLLAGE;
+                collageView.openFilterFragment();
+            } else if (collageView.sb_shapeIndex >= 0) {
+                collageView.openFilterFragment();
+                Log.e(TAG, "collageView.shapeIndex>=0 openFilterFragment");
+            } else {
+                setSelectedTab(INDEX_COLLAGE_INVISIBLE_VIEW);
+                selectFilterTextView.setVisibility(View.VISIBLE);
+                selectImageForAdj = true;
+            }
+        } else if (id == R.id.buttonSwap) {
+            if (collageView.sb_shapeLayoutList.get(collageView.currentCollageIndex).shapeArr.length == INDEX_COLLAGE_SPACE) {
+                collageView.swapBitmaps(INDEX_COLLAGE, INDEX_COLLAGE_BACKGROUND);
+            } else {
+                selectSwapTextView.setVisibility(View.VISIBLE);
+                swapMode = true;
+            }
+        } else if (id == R.id.buttonDelete) {
+            createDeleteDialog();
+        } else if (id == R.id.button_collage_context_filter) {
+            collageView.openFilterFragment();
+        } else if (id == R.id.button_save_collage_image) {
+            LinearLayout lin_sticker = findViewById(R.id.sublinear111);
+            lin_sticker.setVisibility(View.GONE);
+            setSelectedTab(INDEX_COLLAGE_INVISIBLE_VIEW);
+            new SaveImageTask().execute();
+        } else if (id == R.id.button_cancel_collage_image) {
+            backButtonAlertBuilder();
+            sub_edit.setVisibility(View.GONE);
+        } else if (id == R.id.button11) {
+            mulX = 1.0f;
+            mulY = 1.0f;
+            collageView.updateShapeListForRatio(width, height);
+            setRatioButtonBg(0);
+        } else if (id == R.id.button21) {
+            mulX = 2.0f;
+            mulY = 1.0f;
+            collageView.updateShapeListForRatio(width, height);
+            setRatioButtonBg(1);
+        } else if (id == R.id.button12) {
+            mulX = 1.0f;
+            mulY = 2.0f;
+            collageView.updateShapeListForRatio(width, height);
+            setRatioButtonBg(2);
+        } else if (id == R.id.button32) {
+            mulX = 3.0f;
+            mulY = 2.0f;
+            collageView.updateShapeListForRatio(width, height);
+            setRatioButtonBg(3);
+        } else if (id == R.id.button23) {
+            mulX = 2.0f;
+            mulY = 3.0f;
+            collageView.updateShapeListForRatio(width, height);
+            setRatioButtonBg(4);
+        } else if (id == R.id.button43) {
+            mulX = 4.0f;
+            mulY = 3.0f;
+            collageView.updateShapeListForRatio(width, height);
+            setRatioButtonBg(5);
+        } else if (id == R.id.button34) {
+            mulX = 3.0f;
+            mulY = 4.0f;
+            collageView.updateShapeListForRatio(width, height);
+            setRatioButtonBg(6);
+        } else if (id == R.id.button45) {
+            mulX = 4.0f;
+            mulY = 5.0f;
+            collageView.updateShapeListForRatio(width, height);
+            setRatioButtonBg(7);
+        } else if (id == R.id.button57) {
+            mulX = 5.0f;
+            mulY = 7.0f;
+            collageView.updateShapeListForRatio(width, height);
+            setRatioButtonBg(8);
+        } else if (id == R.id.button169) {
+            mulX = 16.0f;
+            mulY = 9.0f;
+            collageView.updateShapeListForRatio(width, height);
+            setRatioButtonBg(9);
+        } else if (id == R.id.button916) {
+            mulX = 9.0f;
+            mulY = 16.0f;
+            collageView.updateShapeListForRatio(width, height);
+            setRatioButtonBg(10);
+        } else if (id == R.id.hide_select_image_warning) {
+            selectSwapTextView.setVisibility(View.INVISIBLE);
+            swapMode = false;
+        } else if (id == R.id.hide_select_image_warning_filter) {
+            selectFilterTextView.setVisibility(View.INVISIBLE);
+            selectImageForAdj = false;
+        } else if (id == R.id.hide_color_container) {
+            hideColorContainer();
+        } else if (id == R.id.buttonText) {
+            clearViewFlipper();
+        }
+        if (id == R.id.buttonFit) {
+            collageView.setShapeScaleMatrix(INDEX_COLLAGE);
+        } else if (id == R.id.buttonCenter) {
+            collageView.setShapeScaleMatrix(INDEX_COLLAGE_BACKGROUND);
+        } else if (id == R.id.button_collage_context_rotate_left) {
+            RecyclerView rec = findViewById(R.id.recyclerViewColor);
+            rec.setVisibility(View.GONE);
+            HorizontalScrollView horizontalScrollViews = findViewById(R.id.collage_ratio_horizontalScrollView);
+            horizontalScrollViews.setVisibility(View.GONE);
+            collageView.setShapeScaleMatrix(INDEX_COLLAGE_RATIO);
+        } else if (id == R.id.button_collage_context_rotate_right) {
+            RecyclerView rec = findViewById(R.id.recyclerViewColor);
+            rec.setVisibility(View.GONE);
+            HorizontalScrollView horizontalScrollViews = findViewById(R.id.collage_ratio_horizontalScrollView);
+            horizontalScrollViews.setVisibility(View.GONE);
+            collageView.setShapeScaleMatrix(INDEX_COLLAGE_SPACE);
+        } else if (id == R.id.button_collage_context_flip_horizontal) {
+            RecyclerView rec = findViewById(R.id.recyclerViewColor);
+            rec.setVisibility(View.GONE);
+            HorizontalScrollView horizontalScrollViews = findViewById(R.id.collage_ratio_horizontalScrollView);
+            horizontalScrollViews.setVisibility(View.GONE);
+            collageView.setShapeScaleMatrix(INDEX_COLLAGE_BLUR);
+        } else if (id == R.id.button_collage_context_flip_vertical) {
+            RecyclerView rec = findViewById(R.id.recyclerViewColor);
+            rec.setVisibility(View.GONE);
+            HorizontalScrollView horizontalScrollViews = findViewById(R.id.collage_ratio_horizontalScrollView);
+            horizontalScrollViews.setVisibility(View.GONE);
+            collageView.setShapeScaleMatrix(INDEX_COLLAGE_INVISIBLE_VIEW);
+        } else if (id == R.id.button_collage_context_rotate_negative) {
+            RecyclerView rec = findViewById(R.id.recyclerViewColor);
+            rec.setVisibility(View.GONE);
+            HorizontalScrollView horizontalScrollViews = findViewById(R.id.collage_ratio_horizontalScrollView);
+            horizontalScrollViews.setVisibility(View.GONE);
+            collageView.setShapeScaleMatrix(TAB_SIZE);
+        } else if (id == R.id.button_collage_context_rotate_positive) {
+            RecyclerView rec = findViewById(R.id.recyclerViewColor);
+            rec.setVisibility(View.GONE);
+            HorizontalScrollView horizontalScrollViews = findViewById(R.id.collage_ratio_horizontalScrollView);
+            horizontalScrollViews.setVisibility(View.GONE);
+            collageView.setShapeScaleMatrix(7);
+        } else if (id == R.id.button_collage_context_zoom_in) {
+            toastMatrixMessage(collageView.setShapeScaleMatrix(8));
+        } else if (id == R.id.button_collage_context_zoom_out) {
+            toastMatrixMessage(collageView.setShapeScaleMatrix(9));
+        } else if (id == R.id.button_collage_context_move_left) {
+            toastMatrixMessage(collageView.setShapeScaleMatrix(10));
+        } else if (id == R.id.button_collage_context_move_right) {
+            toastMatrixMessage(collageView.setShapeScaleMatrix(11));
+        } else if (id == R.id.button_collage_context_move_up) {
+            toastMatrixMessage(collageView.setShapeScaleMatrix(12));
+        } else if (id == R.id.button_collage_context_move_down) {
+            toastMatrixMessage(collageView.setShapeScaleMatrix(13));
+        }
+    }
+
+    private void setRatioButtonBg(int index) {
+        if (ratioButtonArray == null) {
+            ratioButtonArray = new ImageView[RATIO_BUTTON_SIZE];
+            ratioButtonArray[4] = (ImageView) findViewById(R.id.button23);
+            ratioButtonArray[5] = (ImageView) findViewById(R.id.button43);
+            ratioButtonArray[6] = (ImageView) findViewById(R.id.button34);
+            ratioButtonArray[7] = (ImageView) findViewById(R.id.button45);
+            ratioButtonArray[8] = (ImageView) findViewById(R.id.button57);
+            ratioButtonArray[9] = (ImageView) findViewById(R.id.button169);
+            ratioButtonArray[10] = (ImageView) findViewById(R.id.button916);
+        }
+    }
+
+    void toastMatrixMessage(int message) {
+        String str = null;
+        if (message == INDEX_COLLAGE_BACKGROUND) {
+            str = "You reached maximum zoom!";
+        } else if (message == INDEX_COLLAGE_SPACE) {
+            str = "You reached minimum zoom!";
+        } else if (message == TAB_SIZE) {
+            str = "You reached max bottom!";
+        } else if (message == INDEX_COLLAGE_INVISIBLE_VIEW) {
+            str = "You reached max top!";
+        } else if (message == INDEX_COLLAGE_BLUR) {
+            str = "You reached max right!";
+        } else if (message == INDEX_COLLAGE_RATIO) {
+            str = "You reached max left!";
+        }
+        if (str != null) {
+            Toast msg = Toast.makeText(ScrapCreateCollageActivity.this, str, Toast.LENGTH_SHORT);
+            msg.setGravity(Gravity.CENTER, msg.getXOffset() / INDEX_COLLAGE_SPACE, msg.getYOffset() / INDEX_COLLAGE_SPACE);
+            msg.show();
+        }
+    }
+
+    void clearViewFlipper() {
+        viewFlipper.setDisplayedChild(INDEX_COLLAGE_INVISIBLE_VIEW);
+        setTabBg(-10);
+    }
+
+    class Scrap_CollageView extends View {
+        public static final int BACKGROUND_BLUR = 1;
+        public static final int BACKGROUND_PATTERN = 0;
+        private static final int INVALID_POINTER_ID = 1;
+        public static final int PATTERN_SENTINEL = -1;
+        static final float RATIO_CONSTANT = 1.25f;
+        private static final int UPPER_SIZE_LIMIT = 2048;
+        float MIN_ZOOM;
+        RectF sb_above;
+        int sb_animEpsilon;
+        int sb_animHalfTime;
+        int sb_animSizeSeekbarProgress;
+        boolean sb_boole_animate;
+        int sb_animation_Count;
+        int sb_animation_Duration_Limit;
+        int sb_animationLimit;
+        private Runnable animator;
+        int sb_backgroundMode;
+        Bitmap sb_blurBitmap;
+        ImageBlurNormal sb_blurBuilderNormal;
+        int blurRadius = 14;
+        RectF sb_blurRectDst;
+        Rect sb_blurRectSrc;
+        Paint sb_borderPaint;
+        RectF sb_bottom;
+        RectF sb_bottomLeft;
+        RectF sb_bottomRight;
+        Paint sb_circlePaint;
+        float cornerRadius;
+        int currentCollageIndex;
+        RectF sb_drawingAreaRect;
+        final float sb_epsilon;
+        float sb_finalAngle;
+        Bitmap sb_frameBitmap;
+        int sb_frameDuration;
+        RectF sb_frameRect;
+        Matrix sb_identityMatrix;
+        boolean sb_isInCircle;
+        boolean sb_isOnCross;
+        RectF sb_left;
+        private int sb_ActivePointerId;
+        float sb_LastTouchX;
+        float sb_LastTouchY;
+        private ScaleGestureDetector sb_ScaleDetector;
+        float sb_ScaleFactor;
+        private GestureDetectorCompat sb_TouchDetector;
+        Bitmap[] sb_maskBitmapArray;
+        int[] sb_maskResIdList;
+        float[] sb_matrixValues;
+        boolean sb_move;
+        int sb_offsetX;
+        int sb_offsetY;
+        boolean sb_orthogonal;
+        float sb_paddingDistance;
+        Paint sb_paint;
+        Paint sb_paintGray;
+        Bitmap sb_patternBitmap;
+        Paint patternPaint;
+        int previousIndex;
+        float[] pts;
+        Rect sb_rectAnim;
+        RectF sb_right;
+        RotationGestureDetector.OnRotationGestureListener rotateListener;
+        Shape sb_scaleShape;
+        int sb_screenHeight;
+        int sb_screenWidth;
+        int sb_shapeIndex;
+        List<ShapeLayout> sb_shapeLayoutList;
+        Matrix sb_sizeMatrix;
+        Matrix sb_sizeMatrixSaved;
+        float sb_sizeScale;
+        ArrayList<Float> sb_smallestDistanceList;
+        private float sb_startAngle;
+        Matrix sb_startMatrix;
+        long sb_startTime;
+        Matrix sb_textMatrix;
+        RectF sb_topLeft;
+        RectF sb_topRight;
+        float[] sb_values;
+        float sb_xscale;
+        float sb_yscale;
+        PointF sb_zoomStart;
+        private boolean isLinsSubVisible = false;
+
+        class MyGestureListener extends SimpleOnGestureListener {
+
+            MyGestureListener() {
+
+            }
+
+            public boolean onSingleTapConfirmed(MotionEvent event) {
+                Log.d("TAPDETECT", "onSingleTapUp");
+                recyclerView.setVisibility(View.GONE);
+
+                if (recyclerView1.getVisibility() == View.VISIBLE) {
+                    recyclerView1.setVisibility(View.GONE);
+                }
+
+                lin_sticker.setVisibility(View.GONE);
+                if (!isLinsSubVisible) {
+                    lins_sub.setVisibility(View.VISIBLE);
+                    isLinsSubVisible = true;
+                } else {
+                    lins_sub.setVisibility(View.GONE);
+                    isLinsSubVisible = false;
+                }
+
+                linset.setVisibility(GONE);
+
+
+                return true;
+            }
+
+            public boolean onSingleTapUp(MotionEvent event) {
+
+                Log.d("TAPDETECT", "onSingleTapUp");
+
+                if (!sb_isOnCross) {
+                    collageView.selectCurrentShape(event.getX(), event.getY(), true);
+                }
+                return true;
+            }
+        }
+
+        private class ScaleListener extends SimpleOnScaleGestureListener {
+            private ScaleListener() {
+            }
+
+            public boolean onScale(ScaleGestureDetector detector) {
+                if (sb_shapeIndex >= 0) {
+                    sb_ScaleFactor = detector.getScaleFactor();
+                    detector.isInProgress();
+                    sb_ScaleFactor = Math.max(0.1f, Math.min(sb_ScaleFactor, 5.0f));
+                    sb_scaleShape = sb_shapeLayoutList.get(currentCollageIndex).shapeArr[sb_shapeIndex];
+                    if (isScrapBook) {
+                        sb_scaleShape.bitmapMatrixScaleScrapBook(sb_ScaleFactor, sb_ScaleFactor);
+                    } else {
+                        sb_scaleShape.bitmapMatrixScale(sb_ScaleFactor, sb_ScaleFactor, sb_scaleShape.sb_bounds.centerX(), sb_scaleShape.sb_bounds.centerY());
+                    }
+                    invalidate();
+                    requestLayout();
+                }
+                return true;
+            }
+        }
+
+        @SuppressLint({"NewApi"})
+        public Scrap_CollageView(Context context, int width, int height) {
+            super(context);
+            sb_paint = new Paint();
+            sb_paddingDistance = 0.0f;
+            cornerRadius = 0.0f;
+            currentCollageIndex = 0;
+            sb_shapeIndex = PATTERN_SENTINEL;
+            patternPaint = new Paint(1);
+            sb_shapeLayoutList = new ArrayList<>();
+            sb_identityMatrix = new Matrix();
+            sb_maskResIdList = new int[]{};
+            sb_smallestDistanceList = new ArrayList<>();
+            sb_yscale = 2.0f;
+            sb_xscale = 2.0f;
+            sb_sizeScale = 1.0f;
+            sb_sizeMatrix = new Matrix();
+            sb_animSizeSeekbarProgress = 0;
+            sb_boole_animate = false;
+            sb_animation_Count = 0;
+            sb_animationLimit = 31;
+            sb_animHalfTime = (sb_animationLimit / INDEX_COLLAGE_SPACE) + INVALID_POINTER_ID;
+            sb_frameDuration = 10;
+            sb_animEpsilon = 20;
+            sb_animation_Duration_Limit = 50;
+            sb_startTime = System.nanoTime();
+            animator = new Runnable() {
+                @Override
+                public void run() {
+                    boolean scheduleNewFrame = false;
+                    int iter = ((int) (((float) (System.nanoTime() - sb_startTime)) / 1000000.0f)) / sb_animation_Duration_Limit;
+                    if (iter <= 0) {
+                        iter = INVALID_POINTER_ID;
+                    }
+                    if (sb_animation_Count == 0) {
+                        collageView.sb_animation_Count += INVALID_POINTER_ID;
+                    } else {
+                        collageView.sb_animation_Count += iter;
+                    }
+                    setCollageSize(sb_sizeMatrix, animSize(sb_animation_Count));
+                    if (sb_animation_Count < sb_animationLimit) {
+                        scheduleNewFrame = true;
+                    } else {
+                        sb_boole_animate = false;
+                    }
+                    if (scheduleNewFrame) {
+                        postDelayed(this, (long) sb_frameDuration);
+                    } else {
+                        sb_sizeMatrix.set(sb_sizeMatrixSaved);
+                    }
+                    sb_shapeLayoutList.get(currentCollageIndex).shapeArr[BACKGROUND_PATTERN].sb_f508r.roundOut(sb_rectAnim);
+                    invalidate(sb_rectAnim);
+                    sb_startTime = System.nanoTime();
+                }
+            };
+            sb_rectAnim = new Rect();
+            sb_textMatrix = new Matrix();
+            sb_blurRectDst = new RectF();
+            sb_drawingAreaRect = new RectF();
+            sb_above = new RectF();
+            sb_left = new RectF();
+            sb_right = new RectF();
+            sb_bottom = new RectF();
+            sb_move = false;
+            sb_paintGray = new Paint(1);
+            sb_ActivePointerId = 1;
+            sb_zoomStart = new PointF();
+            sb_startMatrix = new Matrix();
+            sb_startAngle = 0.0f;
+            MIN_ZOOM = 0.1f;
+            sb_isInCircle = false;
+            sb_isOnCross = false;
+            sb_orthogonal = false;
+            sb_ScaleFactor = 1.0f;
+            sb_matrixValues = new float[9];
+            sb_finalAngle = 0.0f;
+            sb_epsilon = 4.0f;
+            rotateListener = new RotationGestureDetector.OnRotationGestureListener() {
+                @Override
+                public void OnRotation(RotationGestureDetector rotationGestureDetector) {
+                    if (sb_shapeIndex >= 0) {
+                        float angle = rotationGestureDetector.getAngle();
+                        sb_scaleShape = sb_shapeLayoutList.get(currentCollageIndex).shapeArr[sb_shapeIndex];
+                        float rotation = getMatrixRotation(sb_scaleShape.sb_bitmapMatrix);
+                        if ((rotation == 0.0f || rotation == 90.0f || rotation == 180.0f || rotation == -180.0f || rotation == -90.0f) && Math.abs(sb_finalAngle - angle) < 4.0f) {
+                            sb_orthogonal = true;
+                            return;
+                        }
+                        if (Math.abs((rotation - sb_finalAngle) + angle) < 4.0f) {
+                            angle = sb_finalAngle - rotation;
+                            sb_orthogonal = true;
+                        }
+                        if (Math.abs(90.0f - ((rotation - sb_finalAngle) + angle)) < 4.0f) {
+                            angle = (sb_finalAngle + 90.0f) - rotation;
+                            sb_orthogonal = true;
+                        }
+                        if (Math.abs(180.0f - ((rotation - sb_finalAngle) + angle)) < 4.0f) {
+                            angle = (180.0f + sb_finalAngle) - rotation;
+                            sb_orthogonal = true;
+                        }
+                        if (Math.abs(-180.0f - ((rotation - sb_finalAngle) + angle)) < 4.0f) {
+                            angle = (sb_finalAngle - 0.024902344f) - rotation;
+                            sb_orthogonal = true;
+                        }
+                        if (Math.abs(-90.0f - ((rotation - sb_finalAngle) + angle)) < 4.0f) {
+                            angle = (sb_finalAngle - 0.049804688f) - rotation;
+                            sb_orthogonal = true;
+                        } else {
+                            sb_orthogonal = false;
+                        }
+                        sb_scaleShape.bitmapMatrixRotate(sb_finalAngle - angle);
+                        sb_finalAngle = angle;
+                        invalidate();
+                        requestLayout();
+                    }
+                }
+            };
+            sb_values = new float[9];
+            sb_blurRectSrc = new Rect();
+            sb_maskBitmapArray = new Bitmap[sb_maskResIdList.length];
+            sb_borderPaint = new Paint(1);
+            sb_borderPaint.setColor(getResources().getColor(R.color.white));
+            sb_borderPaint.setStyle(Style.STROKE);
+            sb_borderPaint.setStrokeWidth(10.0f);
+            sb_screenWidth = width;
+            sb_screenHeight = height;
+            sb_circlePaint = new Paint();
+            sb_circlePaint.setColor(SupportMenu.CATEGORY_MASK);
+            sb_identityMatrix.reset();
+            sb_topLeft = new RectF((float) (width * BACKGROUND_PATTERN), (float) (height * BACKGROUND_PATTERN), 0.5f * ((float) width), 0.5f * ((float) height));
+            sb_topRight = new RectF(0.5f * ((float) width), 0.0f * ((float) height), 1.0f * ((float) width), 0.5f * ((float) height));
+            sb_bottomLeft = new RectF((float) (width * BACKGROUND_PATTERN), 0.5f * ((float) height), 0.5f * ((float) width), 1.0f * ((float) height));
+            sb_bottomRight = new RectF(0.5f * ((float) width), 0.5f * ((float) height), 1.0f * ((float) width), 1.0f * ((float) height));
+
+            Path pathTopLeft = new Path();
+            Path pathTopRight = new Path();
+            Path pathBottomLeft = new Path();
+            Path pathBottomRight = new Path();
+            pathTopLeft.addRect(sb_topLeft, Direction.CCW);
+            pathTopRight.addRect(sb_topRight, Direction.CCW);
+            pathBottomLeft.addRect(sb_bottomLeft, Direction.CCW);
+            pathBottomRight.addRect(sb_bottomRight, Direction.CCW);
+            sb_TouchDetector = new GestureDetectorCompat(context, new MyGestureListener());
+            sb_ScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
+            mRotationDetector = new RotationGestureDetector(rotateListener);
+            calculateOffset();
+            patternPaint = new Paint(INVALID_POINTER_ID);
+            patternPaint.setColor(getResources().getColor(R.color.bg_scrap));
+            createShapeList(bitmapList.length, width, height);
+            sb_paintGray.setColor(Color.WHITE);
+
+        }
+
+        private void calculateOffset() {
+
+        }
+
+        public void setCropBitmap(int left, int top, int right, int bottom) {
+            if (sb_shapeIndex >= 0) {
+                Bitmap sourceBitmap = bitmapList[sb_shapeIndex];
+                boolean isFilter = sourceBitmap != ((ShapeLayout) sb_shapeLayoutList.get(0)).shapeArr[sb_shapeIndex].getSb_bitmap();
+                if (isFilter) {
+                    doCrop(left, top, right, bottom, sourceBitmap, false, false);
+                    doCrop(left, top, right, bottom, ((ShapeLayout) sb_shapeLayoutList.get(0)).shapeArr[sb_shapeIndex].getSb_bitmap(), true, true);
+                } else {
+                    doCrop(left, top, right, bottom, sourceBitmap, false, true);
+                }
+                if (!(!isFilter || parameterList == null || parameterList[sb_shapeIndex] == null)) {
+                    parameterList[sb_shapeIndex].setId(Parameter.uniqueId.getAndIncrement());
+                }
+                invalidate();
+            }
+        }
+
+        public void doCrop(int left, int top, int right, int bottom, Bitmap sourceBitmap, boolean isFilter, boolean last) {
+            Bitmap localCropBtm = sourceBitmap;
+            int bitmapWidth = sourceBitmap.getWidth();
+            int bitmapHeight = sourceBitmap.getHeight();
+            if (right > bitmapWidth) {
+                right = bitmapWidth;
+            }
+            if (bottom > bitmapHeight) {
+                bottom = bitmapHeight;
+            }
+            if (right - left > 0 && bottom - top > 0) {
+                if (VERSION.SDK_INT < 12) {
+                    sourceBitmap = ImageBlurNormal.createCroppedBitmap(localCropBtm, left, top, right - left, bottom - top, false);
+                } else {
+                    sourceBitmap = Bitmap.createBitmap(localCropBtm, left, top, right - left, bottom - top);
+                }
+                if (localCropBtm != sourceBitmap) {
+                    localCropBtm.recycle();
+                }
+                if (!isFilter) {
+                    bitmapList[sb_shapeIndex] = sourceBitmap;
+                }
+                if (last) {
+                    for (int i = 0; i < sb_shapeLayoutList.size(); i += 0) {
+                        ((ShapeLayout) sb_shapeLayoutList.get(i)).shapeArr[sb_shapeIndex].setBitmap(sourceBitmap, false);
+                        if (isScrapBook) {
+                            ((ShapeLayout) sb_shapeLayoutList.get(i)).shapeArr[sb_shapeIndex].resetDashPaths();
+                        }
+                    }
+                }
+            }
+        }
+
+        public String saveBitmap(int width, int height) {
+            int i;
+            int btmWidth = (int) (((float) width) * collageView.sb_xscale);
+            int btmHeight = (int) (((float) width) * collageView.sb_yscale);
+            float max = (float) Math.max(btmWidth, btmHeight);
+            float btmScale = ((float) Utils.maxSizeForSave(ScrapCreateCollageActivity.this, 2048.0f)) / max;
+            int newBtmWidth = (int) (((float) btmWidth) * btmScale);
+            int newBtmHeight = (int) (((float) btmHeight) * btmScale);
+            if (newBtmWidth <= 0) {
+                newBtmWidth = btmWidth;
+                Log.e(ScrapCreateCollageActivity.TAG, "newBtmWidth");
+            }
+            if (newBtmHeight <= 0) {
+                newBtmHeight = btmHeight;
+                Log.e(ScrapCreateCollageActivity.TAG, "newBtmHeight");
+            }
+            Bitmap savedBitmap = Bitmap.createBitmap(newBtmWidth, newBtmHeight, Config.ARGB_8888);
+            Canvas bitmapCanvas = new Canvas(savedBitmap);
+            ShapeLayout arr = sb_shapeLayoutList.get(currentCollageIndex);
+            Matrix sizeMat = new Matrix();
+            sizeMat.reset();
+            sizeMat.preScale(btmScale, btmScale);
+            bitmapCanvas.setMatrix(sizeMat);
+            if (sb_backgroundMode == 0) {
+                bitmapCanvas.drawRect(0.0f, 0.0f, (float) btmWidth, (float) btmHeight, patternPaint);
+            }
+            if (!(sb_blurBitmap == null || sb_blurBitmap.isRecycled() || sb_backgroundMode != INVALID_POINTER_ID)) {
+                RectF rectF = new RectF(0.0f, 0.0f, (float) btmWidth, (float) btmHeight);
+                bitmapCanvas.drawBitmap(sb_blurBitmap, sb_blurRectSrc, rectF, sb_paint);
+            }
+            sizeMat.postScale(sb_sizeScale, sb_sizeScale, ((float) newBtmWidth) / 2.0f, ((float) newBtmHeight) / 2.0f);
+            sizeMat.preTranslate((float) (-sb_offsetX), (float) (-sb_offsetY));
+            bitmapCanvas.setMatrix(sizeMat);
+            int q = bitmapCanvas.saveLayer(((float) (-width)) / sb_sizeScale, ((float) (-height)) / sb_sizeScale, ((float) sb_offsetX) + (((float) width) / sb_sizeScale), ((float) sb_offsetY) + (((float) height) / sb_sizeScale), null, Canvas.ALL_SAVE_FLAG);
+            for (i = BACKGROUND_PATTERN; i < arr.shapeArr.length; i += INVALID_POINTER_ID) {
+                boolean drawPorterClear = false;
+                if (i == arr.getClearIndex()) {
+                    drawPorterClear = true;
+                }
+                Log.e(ScrapCreateCollageActivity.TAG, "drawPorterClear " + drawPorterClear);
+                if (isScrapBook) {
+                    arr.shapeArr[i].drawShapeForScrapBook(bitmapCanvas, newBtmWidth, newBtmHeight, false, false);
+                } else {
+                    arr.shapeArr[i].drawShapeForSave(bitmapCanvas, newBtmWidth, newBtmHeight, q, drawPorterClear);
+                }
+            }
+            Matrix mat;
+            if (textDataList != null) {
+                for (i = BACKGROUND_PATTERN; i < textDataList.size(); i += INVALID_POINTER_ID) {
+                    mat = new Matrix();
+                    mat.set(textDataList.get(i).sb_imageSaveMatrix);
+                    mat.postTranslate((float) (-sb_offsetX), (float) (-sb_offsetY));
+                    mat.postScale(btmScale, btmScale);
+                    bitmapCanvas.setMatrix(mat);
+                    bitmapCanvas.drawText(textDataList.get(i).sb_message, textDataList.get(i).sb_xPos, textDataList.get(i).sb_yPos, textDataList.get(i).sb_textPaint);
+                }
+            }
+            bitmapCanvas.restoreToCount(q);
+            String resultPath = String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString()) + getString(R.string.directory) + String.valueOf(System.currentTimeMillis()) + ".jpg";
+            new File(resultPath).getParentFile().mkdirs();
+            try {
+                OutputStream fileOutputStream = new FileOutputStream(resultPath);
+                savedBitmap.compress(CompressFormat.JPEG, 90, fileOutputStream);
+                fileOutputStream.flush();
+                fileOutputStream.close();
+            } catch (IOException e2) {
+                e2.printStackTrace();
+            }
+            savedBitmap.recycle();
+            return resultPath;
+        }
+
+        int getMaskIndex(int resId) {
+            for (int i = BACKGROUND_PATTERN; i < sb_maskResIdList.length; i += INVALID_POINTER_ID) {
+                if (resId == sb_maskResIdList[i]) {
+                    return i;
+                }
+            }
+            return PATTERN_SENTINEL;
+        }
+
+        private void createShapeList(int shapeCount, int width, int height) {
+            sb_shapeLayoutList.clear();
+            sb_smallestDistanceList.clear();
+            SB_Collage collage = SB_Collage.CreateCollage(shapeCount, width, width, isScrapBook);
+            int size = ((SB_CollageLayout) collage.collageLayoutList.get(BACKGROUND_PATTERN)).shapeList.size();
+            Log.e(ScrapCreateCollageActivity.TAG, "bitmapList.length " + bitmapList.length);
+            int i = BACKGROUND_PATTERN;
+            while (i < collage.collageLayoutList.size()) {
+                Shape[] shapeArray = new Shape[size];
+                for (int j = BACKGROUND_PATTERN; j < shapeCount; j += INVALID_POINTER_ID) {
+                    boolean masked = false;
+                    int resId = BACKGROUND_PATTERN;
+                    if (!(((SB_CollageLayout) collage.collageLayoutList.get(i)).maskPairList == null || ((SB_CollageLayout) collage.collageLayoutList.get(i)).maskPairList.isEmpty())) {
+                        for (MaskPair maskPair : ((SB_CollageLayout) collage.collageLayoutList.get(i)).maskPairList) {
+                            if (j == maskPair.index) {
+                                masked = true;
+                                resId = maskPair.id;
+                            }
+                        }
+                    }
+                    if (masked) {
+                        Bitmap maskBitmap = null;
+                        int maskIndex = getMaskIndex(resId);
+                        if (maskIndex >= 0) {
+                            if (sb_maskBitmapArray == null) {
+                                sb_maskBitmapArray = new Bitmap[sb_maskResIdList.length];
+                            }
+                            if (sb_maskBitmapArray[maskIndex] == null) {
+                                sb_maskBitmapArray[maskIndex] = loadMaskBitmap2(resId);
+                                Log.e(ScrapCreateCollageActivity.TAG, "load mask bitmap from factory");
+                            } else {
+                                Log.e(ScrapCreateCollageActivity.TAG, "load mask bitmap from pool");
+                            }
+                            maskBitmap = sb_maskBitmapArray[maskIndex];
+                        }
+                        shapeArray[j] = new Shape((PointF[]) ((SB_CollageLayout) collage.collageLayoutList.get(i)).shapeList.get(j), bitmapList[j], null, sb_offsetX, sb_offsetY, maskBitmap, isScrapBook, j, false, btmDelete, btmScale, sb_screenWidth);
+                        if (isScrapBook) {
+                            shapeArray[j].initScrapBook(npd);
+                        }
+                    } else {
+                        shapeArray[j] = new Shape((PointF[]) ((SB_CollageLayout) collage.collageLayoutList.get(i)).shapeList.get(j), bitmapList[j], ((SB_CollageLayout) collage.collageLayoutList.get(i)).getexceptionIndex(j), sb_offsetX, sb_offsetY, isScrapBook, j, false, btmDelete, btmScale, sb_screenWidth);
+                        if (isScrapBook) {
+                            shapeArray[j].initScrapBook(npd);
+                        }
+                    }
+                }
+                sb_smallestDistanceList.add(smallestDistance(shapeArray));
+                ShapeLayout shapeLayout = new ShapeLayout(shapeArray);
+                shapeLayout.setClearIndex(((SB_CollageLayout) collage.collageLayoutList.get(i)).getClearIndex());
+                sb_shapeLayoutList.add(shapeLayout);
+                i += INVALID_POINTER_ID;
+            }
+            if (!isScrapBook) {
+                if (shapeCount != INVALID_POINTER_ID) {
+                    for (int index = BACKGROUND_PATTERN; index < sb_shapeLayoutList.size(); index += INVALID_POINTER_ID) {
+                        setPathPadding(index, (float) getResources().getInteger(R.integer.default_space_value));
+                        for (i = BACKGROUND_PATTERN; i < sb_shapeLayoutList.get(index).shapeArr.length; i += INVALID_POINTER_ID) {
+                            sb_shapeLayoutList.get(index).shapeArr[i].setScaleMatrix(INVALID_POINTER_ID);
+                        }
+                    }
+                    setCollageSize(sb_sizeMatrix, getResources().getInteger(R.integer.default_ssize_value));
+                } else if (bitmapList.length == INVALID_POINTER_ID) {
+                    setCollageSize(sb_sizeMatrix, getResources().getInteger(R.integer.default_ssize_value));
+                }
+            }
+        }
+
+        private int setShapeScaleMatrix(int mode) {
+            if (sb_shapeIndex < 0) {
+                return PATTERN_SENTINEL;
+            }
+            int message = sb_shapeLayoutList.get(currentCollageIndex).shapeArr[sb_shapeIndex].setScaleMatrix(mode);
+            invalidate();
+            return message;
+        }
+
+        private void deleteBitmap(int index, int width, int height) {
+            Log.e(ScrapCreateCollageActivity.TAG, "index" + index);
+            Shape[] scrapBookTemp = sb_shapeLayoutList.get(BACKGROUND_PATTERN).shapeArr;
+            if (index >= 0 && index < sb_shapeLayoutList.get(BACKGROUND_PATTERN).shapeArr.length) {
+                int i;
+                int newSize = sb_shapeLayoutList.get(BACKGROUND_PATTERN).shapeArr.length + PATTERN_SENTINEL;
+                Bitmap[] currentBitmapListTemp = new Bitmap[newSize];
+                Utils.bitmapListtt = currentBitmapListTemp;
+                Bitmap[] bitmapListTemp = new Bitmap[newSize];
+                int j = BACKGROUND_PATTERN;
+                for (i = BACKGROUND_PATTERN; i < currentBitmapListTemp.length + INVALID_POINTER_ID; i += INVALID_POINTER_ID) {
+                    if (i != index) {
+                        currentBitmapListTemp[j] = sb_shapeLayoutList.get(BACKGROUND_PATTERN).shapeArr[i].getSb_bitmap();
+                        bitmapListTemp[j] = bitmapList[i];
+                        j += INVALID_POINTER_ID;
+                    }
+                }
+                bitmapList[index].recycle();
+                sb_shapeLayoutList.get(BACKGROUND_PATTERN).shapeArr[index].getSb_bitmap().recycle();
+                sb_shapeLayoutList.clear();
+                sb_smallestDistanceList.clear();
+
+
+                SB_Collage collage = SB_Collage.CreateCollage(newSize, width, width, isScrapBook);
+                int size = ((SB_CollageLayout) collage.collageLayoutList.get(BACKGROUND_PATTERN)).shapeList.size();
+                bitmapList = bitmapListTemp;
+                i = BACKGROUND_PATTERN;
+//                Utils.bitmapListtt = newSize;
+                while (i < collage.collageLayoutList.size()) {
+                    Shape[] shapeArray = new Shape[size];
+                    for (j = BACKGROUND_PATTERN; j < currentBitmapListTemp.length; j += INVALID_POINTER_ID) {
+                        boolean masked = false;
+                        int resId = BACKGROUND_PATTERN;
+                        if (!(((SB_CollageLayout) collage.collageLayoutList.get(i)).maskPairList == null || ((SB_CollageLayout) collage.collageLayoutList.get(i)).maskPairList.isEmpty())) {
+                            for (MaskPair maskPair : ((SB_CollageLayout) collage.collageLayoutList.get(i)).maskPairList) {
+                                if (j == maskPair.index) {
+                                    masked = true;
+                                    resId = maskPair.id;
+                                }
+                            }
+                        }
+                        if (masked) {
+                            Bitmap maskBitmap = null;
+                            int maskIndez = getMaskIndex(resId);
+                            if (maskIndez >= 0) {
+                                if (sb_maskBitmapArray == null) {
+                                    sb_maskBitmapArray = new Bitmap[sb_maskResIdList.length];
+                                }
+                                if (sb_maskBitmapArray[maskIndez] == null) {
+                                    sb_maskBitmapArray[maskIndez] = loadMaskBitmap2(resId);
+                                    Log.e(ScrapCreateCollageActivity.TAG, "load mask bitmap from factory");
+                                } else {
+                                    Log.e(ScrapCreateCollageActivity.TAG, "load mask bitmap from pool");
+                                }
+                                maskBitmap = sb_maskBitmapArray[maskIndez];
+                            }
+                            shapeArray[j] = new Shape((PointF[]) ((SB_CollageLayout) collage.collageLayoutList.get(i)).shapeList.get(j), currentBitmapListTemp[j], null, sb_offsetX, sb_offsetY, maskBitmap, isScrapBook, j, true, btmDelete, btmScale, sb_screenWidth);
+                            if (isScrapBook) {
+                                shapeArray[j].initScrapBook(npd);
+                            }
+                        } else {
+                            int i2 = j;
+                            shapeArray[j] = new Shape((PointF[]) ((SB_CollageLayout) collage.collageLayoutList.get(i)).shapeList.get(j), currentBitmapListTemp[j], ((SB_CollageLayout) collage.collageLayoutList.get(i)).getexceptionIndex(j), sb_offsetX, sb_offsetY, isScrapBook, i2, true, btmDelete, btmScale, sb_screenWidth);
+                            if (isScrapBook) {
+                                shapeArray[j].initScrapBook(npd);
+                            }
+                        }
+                    }
+                    if (isScrapBook) {
+                        for (int k = BACKGROUND_PATTERN; k < scrapBookTemp.length; k += INVALID_POINTER_ID) {
+                            if (k < index) {
+                                shapeArray[k].sb_bitmapMatrix.set(scrapBookTemp[k].sb_bitmapMatrix);
+                            }
+                            if (k > index) {
+                                shapeArray[k + PATTERN_SENTINEL].sb_bitmapMatrix.set(scrapBookTemp[k].sb_bitmapMatrix);
+                            }
+                        }
+                    }
+                    ShapeLayout shapeLayout = new ShapeLayout(shapeArray);
+                    shapeLayout.setClearIndex(((SB_CollageLayout) collage.collageLayoutList.get(i)).getClearIndex());
+                    sb_shapeLayoutList.add(shapeLayout);
+                    sb_smallestDistanceList.add(smallestDistance(shapeArray));
+                    i += INVALID_POINTER_ID;
+                }
+                currentCollageIndex = BACKGROUND_PATTERN;
+                edit_collageAdapter.scrap_selectedPosition = BACKGROUND_PATTERN;
+                edit_collageAdapter.setData(SB_Collage.collageIconArray[newSize + PATTERN_SENTINEL]);
+                edit_collageAdapter.notifyDataSetChanged();
+                if (!isScrapBook) {
+                    updateShapeListForRatio(width, height);
+                }
+                unselectShapes();
+                for (i = BACKGROUND_PATTERN; i < sb_shapeLayoutList.get(BACKGROUND_PATTERN).shapeArr.length; i += INVALID_POINTER_ID) {
+                    Log.e(ScrapCreateCollageActivity.TAG, "i " + i + "is recylced " + sb_shapeLayoutList.get(BACKGROUND_PATTERN).shapeArr[i].getSb_bitmap().isRecycled());
+                }
+                invalidate();
+                if (currentBitmapListTemp.length == INVALID_POINTER_ID) {
+                    setVisibilityForSingleImage();
+                }
+                if (newSize == INVALID_POINTER_ID) {
+                    setPathPadding(BACKGROUND_PATTERN, 0.0f);
+                    if (sb_sizeScale == 1.0f && !isScrapBook) {
+                        setCollageSize(sb_sizeMatrix, getResources().getInteger(R.integer.default_ssize_value));
+                    }
+                }
+            }
+        }
+
+        Bitmap loadMaskBitmap2(int resId) {
+            return convertToAlphaMask(BitmapFactory.decodeResource(getResources(), resId));
+        }
+
+        private Bitmap convertToAlphaMask(Bitmap b) {
+            Bitmap a = Bitmap.createBitmap(b.getWidth(), b.getHeight(), Config.ALPHA_8);
+            new Canvas(a).drawBitmap(b, 0.0f, 0.0f, null);
+            b.recycle();
+            return a;
+        }
+
+        public float smallestDistance(Shape[] shapeArray) {
+            float smallestDistance = shapeArray[BACKGROUND_PATTERN].smallestDistance();
+            for (int i = BACKGROUND_PATTERN; i < shapeArray.length; i += INVALID_POINTER_ID) {
+                float distance = shapeArray[i].smallestDistance();
+                if (distance < smallestDistance) {
+                    smallestDistance = distance;
+                }
+            }
+            return smallestDistance;
+        }
+
+        private void updateShapeListForRatio(int width, int height) {
+            int shapeCount = sb_shapeLayoutList.get(BACKGROUND_PATTERN).shapeArr.length;
+            PointF scale = getRatio();
+            calculateOffset();
+            SB_Collage collage = SB_Collage.CreateCollage(shapeCount, (int) (scale.x * ((float) width)), (int) (((float) width) * scale.y), isScrapBook);
+            sb_smallestDistanceList.clear();
+            for (int index = BACKGROUND_PATTERN; index < sb_shapeLayoutList.size(); index += INVALID_POINTER_ID) {
+                if (shapeCount == INVALID_POINTER_ID) {
+                    sb_shapeLayoutList.get(index).shapeArr[BACKGROUND_PATTERN].changeRatio((PointF[]) ((SB_CollageLayout) collage.collageLayoutList.get(index)).shapeList.get(BACKGROUND_PATTERN), null, sb_offsetX, sb_offsetY, isScrapBook, BACKGROUND_PATTERN, (int) (scale.x * ((float) width)), (int) (((float) width) * scale.y));
+                } else {
+                    for (int j = BACKGROUND_PATTERN; j < shapeCount; j += INVALID_POINTER_ID) {
+                        sb_shapeLayoutList.get(index).shapeArr[j].changeRatio((PointF[]) ((SB_CollageLayout) collage.collageLayoutList.get(index)).shapeList.get(j), null, sb_offsetX, sb_offsetY, isScrapBook, j, (int) (scale.x * ((float) width)), (int) (((float) width) * scale.y));
+                    }
+                }
+                sb_smallestDistanceList.add(smallestDistance(sb_shapeLayoutList.get(index).shapeArr));
+                setPathPadding(index, sb_paddingDistance);
+                if (!isScrapBook) {
+                    for (int k = BACKGROUND_PATTERN; k < sb_shapeLayoutList.get(index).shapeArr.length; k += INVALID_POINTER_ID) {
+                        sb_shapeLayoutList.get(index).shapeArr[k].setScaleMatrix(INVALID_POINTER_ID);
+                    }
+                }
+            }
+            setCornerRadius(cornerRadius);
+            if (sb_blurBitmap != null) {
+                setBlurRect2((float) sb_blurBitmap.getWidth(), (float) sb_blurBitmap.getHeight());
+            }
+            postInvalidate();
+        }
+
+        PointF getRatio() {
+            sb_yscale = 1.0f;
+            sb_xscale = 1.0f;
+            sb_yscale = mulY / mulX;
+            if (!isScrapBook && sb_yscale > RATIO_CONSTANT) {
+                sb_xscale = RATIO_CONSTANT / sb_yscale;
+                sb_yscale = RATIO_CONSTANT;
+            }
+            return new PointF(sb_xscale, sb_yscale);
+        }
+
+        private void swapBitmaps(int index1, int index2) {
+            Bitmap bitmap1 = sb_shapeLayoutList.get(BACKGROUND_PATTERN).shapeArr[index1].getSb_bitmap();
+            Bitmap bitmap2 = sb_shapeLayoutList.get(BACKGROUND_PATTERN).shapeArr[index2].getSb_bitmap();
+            for (int i = BACKGROUND_PATTERN; i < sb_shapeLayoutList.size(); i += INVALID_POINTER_ID) {
+                sb_shapeLayoutList.get(i).shapeArr[index1].setBitmap(bitmap2, false);
+                sb_shapeLayoutList.get(i).shapeArr[index2].setBitmap(bitmap1, false);
+            }
+            Bitmap temp = bitmapList[index1];
+            bitmapList[index1] = bitmapList[index2];
+            bitmapList[index2] = temp;
+            Parameter tempParam = parameterList[index1];
+            parameterList[index1] = parameterList[index2];
+            parameterList[index2] = tempParam;
+            float sd = sb_smallestDistanceList.get(index1).floatValue();
+            sb_smallestDistanceList.set(index1, sb_smallestDistanceList.get(index2));
+            sb_smallestDistanceList.set(index2, sd);
+            selectSwapTextView.setVisibility(INVISIBLE);
+            unselectShapes();
+        }
+
+        void setCurrentCollageIndex(int index) {
+            currentCollageIndex = index;
+            if (currentCollageIndex >= sb_shapeLayoutList.size()) {
+                currentCollageIndex = BACKGROUND_PATTERN;
+            }
+            if (currentCollageIndex < 0) {
+                currentCollageIndex = sb_shapeLayoutList.size() + PATTERN_SENTINEL;
+            }
+            setCornerRadius(cornerRadius);
+            setPathPadding(currentCollageIndex, sb_paddingDistance);
+        }
+
+        private void setCornerRadius(float radius) {
+            cornerRadius = radius;
+            CornerPathEffect corEffect = new CornerPathEffect(radius);
+            for (int i = BACKGROUND_PATTERN; i < sb_shapeLayoutList.get(currentCollageIndex).shapeArr.length; i += INVALID_POINTER_ID) {
+                sb_shapeLayoutList.get(currentCollageIndex).shapeArr[i].setRadius(corEffect);
+            }
+            postInvalidate();
+        }
+
+        private void setPathPadding(int index, float distance) {
+            sb_paddingDistance = distance;
+            for (int i = BACKGROUND_PATTERN; i < sb_shapeLayoutList.get(index).shapeArr.length; i += INVALID_POINTER_ID) {
+                sb_shapeLayoutList.get(index).shapeArr[i].scalePath((sb_smallestDistanceList.get(index) / 250.0f) * distance, (float) sb_screenWidth, (float) sb_screenWidth);
+                if (!isScrapBook) {
+                    sb_shapeLayoutList.get(index).shapeArr[i].checkScaleBounds();
+                    sb_shapeLayoutList.get(index).shapeArr[i].checkBoundries();
+                }
+            }
+            postInvalidate();
+        }
+
+        private void setCollageSize(Matrix matrix, int progress) {
+            matrix.reset();
+            sb_sizeScale = calculateSize((float) progress);
+            matrix.postScale(sb_sizeScale, sb_sizeScale, (((float) (sb_offsetX + sb_offsetX)) + (((float) width) * sb_xscale)) / 2.0f, (((float) (sb_offsetY + sb_offsetY)) + (((float) width) * sb_yscale)) / 2.0f);
+            invalidate();
+        }
+
+        float calculateSize(float progress) {
+            return 1.0f - (progress / 200.0f);
+        }
+
+        void setPatternPaint(int resId) {
+            if (patternPaint == null) {
+                patternPaint = new Paint(INVALID_POINTER_ID);
+                patternPaint.setColor(PATTERN_SENTINEL);
+            }
+            if (resId == PATTERN_SENTINEL) {
+                patternPaint.setShader(null);
+                patternPaint.setColor(PATTERN_SENTINEL);
+                postInvalidate();
+                return;
+            }
+            sb_patternBitmap = BitmapFactory.decodeResource(getResources(), resId);
+            patternPaint.setShader(new BitmapShader(sb_patternBitmap, TileMode.REPEAT, TileMode.REPEAT));
+            postInvalidate();
+        }
+
+        void setPatternPaintColor(int color) {
+            if (patternPaint == null) {
+                patternPaint = new Paint(INVALID_POINTER_ID);
+            }
+            patternPaint.setShader(null);
+            patternPaint.setColor(color);
+            postInvalidate();
+        }
+
+        public void startAnimator() {
+            if (seekbarSize != null) {
+                sb_animSizeSeekbarProgress = seekbarSize.getProgress();
+            } else {
+                sb_animSizeSeekbarProgress = BACKGROUND_PATTERN;
+            }
+            sb_sizeMatrixSaved = new Matrix(sb_sizeMatrix);
+            sb_animation_Count = BACKGROUND_PATTERN;
+            sb_boole_animate = true;
+            removeCallbacks(animator);
+            postDelayed(animator, 150);
+        }
+
+        int animSize(int value) {
+            int res;
+            if (value < sb_animHalfTime) {
+                res = value;
+            } else {
+                res = sb_animationLimit - value;
+            }
+            return sb_animSizeSeekbarProgress + Math.round((float) (res * ScrapCreateCollageActivity.INDEX_COLLAGE_SPACE));
+        }
+
+
+        public void onDraw(Canvas canvas) {
+            int width = getWidth();
+            int height = getHeight();
+            canvas.save();
+            sb_drawingAreaRect.set((float) sb_offsetX, (float) sb_offsetY, ((float) sb_offsetX) + (((float) width) * sb_xscale), ((float) sb_offsetY) + (((float) width) * sb_yscale));
+            canvas.drawPaint(sb_paintGray);
+            if (sb_backgroundMode == 0) {
+                canvas.drawRect(sb_drawingAreaRect, patternPaint);
+            }
+            if (!(sb_blurBitmap == null || sb_blurBitmap.isRecycled() || sb_backgroundMode != INVALID_POINTER_ID)) {
+                sb_blurRectDst.set(sb_drawingAreaRect);
+                canvas.drawBitmap(sb_blurBitmap, sb_blurRectSrc, sb_blurRectDst, sb_paint);
+            }
+            if (!isScrapBook) {
+                canvas.setMatrix(sb_sizeMatrix);
+            }
+            int j = BACKGROUND_PATTERN;
+            if (!isScrapBook || showText) {
+                j = canvas.saveLayer(0.0f, 0.0f, ((float) width) / sb_sizeScale, ((float) height) / sb_sizeScale, null, Canvas.ALL_SAVE_FLAG);
+            }
+            int i = BACKGROUND_PATTERN;
+            while (i < sb_shapeLayoutList.get(currentCollageIndex).shapeArr.length) {
+                boolean drawPorterClear = false;
+                if (i == sb_shapeLayoutList.get(currentCollageIndex).getClearIndex()) {
+                    drawPorterClear = true;
+                }
+                if (isScrapBook) {
+                    sb_shapeLayoutList.get(currentCollageIndex).shapeArr[i].drawShapeForScrapBook(canvas, width, height, i == sb_shapeIndex, sb_orthogonal);
+                } else {
+                    sb_shapeLayoutList.get(currentCollageIndex).shapeArr[i].drawShape(canvas, width, height, j, drawPorterClear);
+                }
+                i += INVALID_POINTER_ID;
+            }
+            if (!isScrapBook && sb_shapeIndex >= 0 && sb_shapeLayoutList.get(BACKGROUND_PATTERN).shapeArr.length > INVALID_POINTER_ID) {
+                canvas.drawRect(sb_shapeLayoutList.get(currentCollageIndex).shapeArr[sb_shapeIndex].sb_bounds, sb_borderPaint);
+            }
+            if (showText) {
+                canvas.restoreToCount(j);
+                for (i = BACKGROUND_PATTERN; i < textDataList.size(); i += INVALID_POINTER_ID) {
+                    sb_textMatrix.set(textDataList.get(i).sb_imageSaveMatrix);
+                    canvas.setMatrix(sb_textMatrix);
+                    canvas.drawText(textDataList.get(i).sb_message, textDataList.get(i).sb_xPos, textDataList.get(i).sb_yPos, textDataList.get(i).sb_textPaint);
+                    canvas.setMatrix(sb_identityMatrix);
+                }
+            }
+            if (!(sb_frameBitmap == null || sb_frameBitmap.isRecycled())) {
+                canvas.drawBitmap(sb_frameBitmap, null, sb_frameRect, sb_paint);
+            }
+            if (isScrapBook) {
+                canvas.restore();
+                sb_above.set(0.0f, 0.0f, (float) canvas.getWidth(), sb_drawingAreaRect.top);
+                sb_left.set(0.0f, sb_drawingAreaRect.top, sb_drawingAreaRect.left, sb_drawingAreaRect.bottom);
+                sb_right.set(sb_drawingAreaRect.right, sb_drawingAreaRect.top, (float) canvas.getWidth(), sb_drawingAreaRect.bottom);
+                sb_bottom.set(0.0f, sb_drawingAreaRect.bottom, (float) canvas.getWidth(), (float) canvas.getHeight());
+                canvas.drawRect(sb_above, sb_paintGray);
+                canvas.drawRect(sb_left, sb_paintGray);
+                canvas.drawRect(sb_right, sb_paintGray);
+                canvas.drawRect(sb_bottom, sb_paintGray);
+            }
+        }
+
+        public boolean onTouchEvent(MotionEvent ev) {
+            sb_ScaleDetector.onTouchEvent(ev);
+            sb_TouchDetector.onTouchEvent(ev);
+            if (isScrapBook) {
+                mRotationDetector.onTouchEvent(ev);
+            }
+            int action = ev.getAction();
+            float x;
+            float y;
+            int pointerIndex;
+            switch (action & MotionEventCompat.ACTION_MASK) {
+                case BACKGROUND_PATTERN:
+                    previousIndex = sb_shapeIndex;
+                    x = ev.getX();
+                    y = ev.getY();
+                    sb_LastTouchX = x;
+                    sb_LastTouchY = y;
+                    sb_orthogonal = false;
+                    sb_ActivePointerId = ev.getPointerId(BACKGROUND_PATTERN);
+                    if (isScrapBook && sb_shapeIndex >= 0) {
+                        sb_zoomStart.set(x, y);
+                        pts = sb_shapeLayoutList.get(currentCollageIndex).shapeArr[sb_shapeIndex].getMappedCenter();
+                        if (pts != null) {
+                            sb_startAngle = -Utils.pointToAngle(x, y, pts[BACKGROUND_PATTERN], pts[INVALID_POINTER_ID]);
+                        }
+                        sb_isInCircle = sb_shapeLayoutList.get(currentCollageIndex).shapeArr[sb_shapeIndex].isInCircle(x, y);
+                        sb_isOnCross = sb_shapeLayoutList.get(currentCollageIndex).shapeArr[sb_shapeIndex].isOnCross(x, y);
+                        break;
+                    }
+                    selectCurrentShape(x, y, false);
+                    break;
+                case INVALID_POINTER_ID:
+                    sb_orthogonal = false;
+                    sb_ActivePointerId = INVALID_POINTER_ID;
+                    if (sb_isOnCross) {
+                        createDeleteDialog();
+                    }
+                    sb_isInCircle = false;
+                    sb_isOnCross = false;
+                    invalidate();
+                    break;
+                case ScrapCreateCollageActivity.INDEX_COLLAGE_SPACE:
+                    if (!sb_isOnCross) {
+                        pointerIndex = ev.findPointerIndex(sb_ActivePointerId);
+                        x = ev.getX(pointerIndex);
+                        y = ev.getY(pointerIndex);
+                        if (sb_shapeIndex < 0) {
+                            selectCurrentShape(x, y, false);
+                        }
+                        if (sb_shapeIndex >= 0) {
+                            if (!isScrapBook || !sb_isInCircle) {
+                                sb_shapeLayoutList.get(currentCollageIndex).shapeArr[sb_shapeIndex].bitmapMatrixTranslate(x - sb_LastTouchX, y - sb_LastTouchY);
+                                sb_LastTouchX = x;
+                                sb_LastTouchY = y;
+                                invalidate();
+                                break;
+                            }
+                            pts = sb_shapeLayoutList.get(currentCollageIndex).shapeArr[sb_shapeIndex].getMappedCenter();
+                            float currentAngle = -Utils.pointToAngle(x, y, pts[BACKGROUND_PATTERN], pts[INVALID_POINTER_ID]);
+                            Log.d(ScrapCreateCollageActivity.TAG, "currentAngle " + Float.toString(currentAngle));
+                            float rotation = getMatrixRotation(sb_shapeLayoutList.get(currentCollageIndex).shapeArr[sb_shapeIndex].sb_bitmapMatrix);
+                            if ((rotation == 0.0f || rotation == 90.0f || rotation == 180.0f || rotation == -180.0f || rotation == -90.0f) && Math.abs(sb_startAngle - currentAngle) < 4.0f) {
+                                sb_orthogonal = true;
+                            } else {
+                                if (Math.abs((rotation - sb_startAngle) + currentAngle) < 4.0f) {
+                                    currentAngle = sb_startAngle - rotation;
+                                    sb_orthogonal = true;
+                                    Log.d(ScrapCreateCollageActivity.TAG, "aaaaa " + Float.toString(rotation));
+                                } else {
+                                    if (Math.abs(90.0f - ((rotation - sb_startAngle) + currentAngle)) < 4.0f) {
+                                        currentAngle = (90.0f + sb_startAngle) - rotation;
+                                        sb_orthogonal = true;
+                                        Log.d(ScrapCreateCollageActivity.TAG, "bbbbb " + Float.toString(rotation));
+                                    } else {
+                                        if (Math.abs(180.0f - ((rotation - sb_startAngle) + currentAngle)) < 4.0f) {
+                                            currentAngle = (180.0f + sb_startAngle) - rotation;
+                                            sb_orthogonal = true;
+                                            Log.d(ScrapCreateCollageActivity.TAG, "cccc " + Float.toString(rotation));
+                                        } else {
+                                            if (Math.abs(-180.0f - ((rotation - sb_startAngle) + currentAngle)) < 4.0f) {
+                                                currentAngle = (-180.0f + sb_startAngle) - rotation;
+                                                sb_orthogonal = true;
+                                            } else {
+                                                if (Math.abs(-90.0f - ((rotation - sb_startAngle) + currentAngle)) < 4.0f) {
+                                                    currentAngle = (-90.0f + sb_startAngle) - rotation;
+                                                    sb_orthogonal = true;
+                                                    Log.d(ScrapCreateCollageActivity.TAG, "dddd " + Float.toString(rotation));
+                                                } else {
+                                                    sb_orthogonal = false;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                sb_shapeLayoutList.get(currentCollageIndex).shapeArr[sb_shapeIndex].bitmapMatrixRotate(sb_startAngle - currentAngle);
+                                sb_startAngle = currentAngle;
+                            }
+                            float scaley = ((float) Math.sqrt((double) (((x - pts[BACKGROUND_PATTERN]) * (x - pts[BACKGROUND_PATTERN])) + ((y - pts[INVALID_POINTER_ID]) * (y - pts[INVALID_POINTER_ID]))))) / ((float) Math.sqrt((double) (((sb_zoomStart.x - pts[BACKGROUND_PATTERN]) * (sb_zoomStart.x - pts[BACKGROUND_PATTERN])) + ((sb_zoomStart.y - pts[INVALID_POINTER_ID]) * (sb_zoomStart.y - pts[INVALID_POINTER_ID])))));
+                            float scale = sb_shapeLayoutList.get(currentCollageIndex).shapeArr[sb_shapeIndex].getScale();
+                            if (scale >= MIN_ZOOM || (scale < MIN_ZOOM && scaley > 1.0f)) {
+                                sb_shapeLayoutList.get(currentCollageIndex).shapeArr[sb_shapeIndex].bitmapMatrixScaleScrapBook(scaley, scaley);
+                                sb_zoomStart.set(x, y);
+                            }
+                            invalidate();
+                            return true;
+                        }
+                    }
+                    break;
+                case ScrapCreateCollageActivity.INDEX_COLLAGE_RATIO:
+                    sb_ActivePointerId = INVALID_POINTER_ID;
+                    sb_isInCircle = false;
+                    sb_isOnCross = false;
+                    break;
+                case ScrapCreateCollageActivity.TAB_SIZE:
+                    sb_finalAngle = 0.0f;
+                    pointerIndex = (MotionEventCompat.ACTION_POINTER_INDEX_MASK & action) >> 8;
+                    if (ev.getPointerId(pointerIndex) == sb_ActivePointerId) {
+                        int newPointerIndex = pointerIndex == 0 ? INVALID_POINTER_ID : BACKGROUND_PATTERN;
+                        sb_LastTouchX = ev.getX(newPointerIndex);
+                        sb_LastTouchY = ev.getY(newPointerIndex);
+                        sb_ActivePointerId = ev.getPointerId(newPointerIndex);
+                        break;
+                    }
+                    break;
+            }
+            return true;
+        }
+
+        private void selectCurrentShapeScrapBook(float x, float y, boolean isSingleTap) {
+            int i;
+            int length = sb_shapeLayoutList.get(currentCollageIndex).shapeArr.length;
+            boolean isSelected = false;
+            for (i = length + PATTERN_SENTINEL; i >= 0; i += PATTERN_SENTINEL) {
+                if (sb_shapeLayoutList.get(currentCollageIndex).shapeArr[i].isScrapBookSelected(x, y)) {
+                    sb_shapeIndex = i;
+                    isSelected = true;
+                    break;
+                }
+            }
+            if (previousIndex == sb_shapeIndex && isSingleTap) {
+                unselectShapes();
+            } else if (!isSelected) {
+                unselectShapes();
+            } else if (selectImageForAdj) {
+                openFilterFragment();
+            } else if (sb_shapeIndex >= 0 && sb_shapeIndex < length) {
+                Shape shapeTemp = sb_shapeLayoutList.get(currentCollageIndex).shapeArr[sb_shapeIndex];
+                Bitmap btmTemp = bitmapList[sb_shapeIndex];
+                Parameter prmTemp = parameterList[sb_shapeIndex];
+                for (i = BACKGROUND_PATTERN; i < length; i += INVALID_POINTER_ID) {
+                    if (i >= sb_shapeIndex) {
+                        if (i < length + PATTERN_SENTINEL) {
+                            sb_shapeLayoutList.get(currentCollageIndex).shapeArr[i] = sb_shapeLayoutList.get(currentCollageIndex).shapeArr[i + INVALID_POINTER_ID];
+                            bitmapList[i] = bitmapList[i + INVALID_POINTER_ID];
+                            parameterList[i] = parameterList[i + INVALID_POINTER_ID];
+                        } else {
+                            sb_shapeLayoutList.get(currentCollageIndex).shapeArr[i] = shapeTemp;
+                            bitmapList[i] = btmTemp;
+                            parameterList[i] = prmTemp;
+                        }
+                    }
+                }
+                if (previousIndex == sb_shapeIndex) {
+                    previousIndex = length + PATTERN_SENTINEL;
+                } else if (previousIndex > sb_shapeIndex) {
+                    previousIndex += PATTERN_SENTINEL;
+                }
+                sb_shapeIndex = length + PATTERN_SENTINEL;
+                if (sb_shapeLayoutList.get(BACKGROUND_PATTERN).shapeArr.length > 0) {
+                    contextFooter.setVisibility(BACKGROUND_PATTERN);
+                    setSelectedTab(ScrapCreateCollageActivity.INDEX_COLLAGE_INVISIBLE_VIEW);
+                }
+            }
+            if (sb_shapeIndex >= 0) {
+                sb_shapeLayoutList.get(currentCollageIndex).shapeArr[sb_shapeIndex].bitmapMatrixgGetValues(sb_matrixValues);
+                sb_ScaleFactor = sb_matrixValues[BACKGROUND_PATTERN];
+            }
+            postInvalidate();
+        }
+
+        private void selectCurrentShape(float x, float y, boolean isSingleTap) {
+            if (isScrapBook) {
+                selectCurrentShapeScrapBook(x, y, isSingleTap);
+            } else {
+                selectCurrentShapeCollage(x, y, isSingleTap);
+            }
+        }
+
+        private void selectCurrentShapeCollage(float x, float y, boolean isSingleTap) {
+            int swapIndex = sb_shapeIndex;
+            for (int i = BACKGROUND_PATTERN; i < sb_shapeLayoutList.get(currentCollageIndex).shapeArr.length; i += INVALID_POINTER_ID) {
+                if (sb_shapeLayoutList.get(currentCollageIndex).shapeArr[i].sb_region.contains((int) x, (int) y)) {
+                    sb_shapeIndex = i;
+                }
+            }
+            if (selectImageForAdj) {
+                openFilterFragment();
+            } else if (swapMode) {
+                Log.e(ScrapCreateCollageActivity.TAG, "PRE SWAP");
+                if (swapIndex != sb_shapeIndex && swapIndex > PATTERN_SENTINEL && sb_shapeIndex > PATTERN_SENTINEL) {
+                    Log.e(ScrapCreateCollageActivity.TAG, "SWAP");
+                    swapBitmaps(sb_shapeIndex, swapIndex);
+                    swapMode = false;
+                }
+            } else if (previousIndex == sb_shapeIndex && isSingleTap) {
+                unselectShapes();
+            } else if (sb_shapeLayoutList.get(0).shapeArr.length > 0) {
+                contextFooter.setVisibility(View.VISIBLE);
+                setSelectedTab(ScrapCreateCollageActivity.INDEX_COLLAGE_INVISIBLE_VIEW);
+                Log.e(ScrapCreateCollageActivity.TAG, "VISIBLE");
+            }
+            if (sb_shapeIndex >= 0) {
+                sb_shapeLayoutList.get(currentCollageIndex).shapeArr[sb_shapeIndex].bitmapMatrixgGetValues(sb_matrixValues);
+                sb_ScaleFactor = sb_matrixValues[BACKGROUND_PATTERN];
+            }
+            postInvalidate();
+        }
+
+        void unselectShapes() {
+            contextFooter.setVisibility(INVISIBLE);
+            sb_shapeIndex = PATTERN_SENTINEL;
+            Log.e(ScrapCreateCollageActivity.TAG, "unselectShapes");
+            postInvalidate();
+        }
+
+        public void openFilterFragment() {
+            selectFilterTextView.setVisibility(View.INVISIBLE);
+            selectImageForAdj = false;
+            if (sb_shapeIndex >= 0) {
+                setVisibilityOfFilterHorizontalListview(true);
+            }
+        }
+
+        float getMatrixRotation(Matrix matrix) {
+            matrix.getValues(sb_values);
+            return (float) Math.round(Math.atan2((double) sb_values[INVALID_POINTER_ID], (double) sb_values[BACKGROUND_PATTERN]) * 57.29577951308232d);
+        }
+
+        public void setBlurBitmap(int radius, boolean cascade) {
+            if (sb_blurBuilderNormal == null) {
+                sb_blurBuilderNormal = new ImageBlurNormal();
+            }
+            if (cascade) {
+                sb_backgroundMode = 2;
+                if (!isScrapBook) {
+                    seekbarSize.setProgress(seekbarSize.getMax());
+                }
+            } else {
+                sb_backgroundMode = 1;
+            }
+
+            Bitmap copyBitmap = bitmapList[0].copy(bitmapList[0].getConfig(), true);
+            sb_blurBitmap = NativeStackBlur.process(copyBitmap, radius);
+
+            if (sb_blurBitmap != null) {
+                setBlurRect2((float) sb_blurBitmap.getWidth(), (float) sb_blurBitmap.getHeight());
+            }
+            postInvalidate();
+        }
+
+        void setBlurRect2(float btmwidth, float btmheight) {
+            float w;
+            float h;
+            if ((mulY * btmwidth) / mulX < btmheight) {
+                w = (float) ((int) btmwidth);
+                h = (mulY * btmwidth) / mulX;
+            } else {
+                w = (((float) ((int) mulX)) * btmheight) / mulY;
+                h = (float) ((int) btmheight);
+            }
+            int l = (int) ((btmwidth - w) / 2.0f);
+            int t = (int) ((btmheight - h) / 2.0f);
+            sb_blurRectSrc.set(l, t, (int) (((float) l) + w), (int) (((float) t) + h));
+        }
+    }
+
+    private void setVisibilityForSingleImage() {
+        findViewById(R.id.seekbar_corner_container).setVisibility(View.GONE);
+        findViewById(R.id.seekbar_space_container).setVisibility(View.GONE);
+        findViewById(R.id.buttonBlur).setVisibility(View.VISIBLE);
+        findViewById(R.id.buttonDelete).setVisibility(View.GONE);
+        findViewById(R.id.buttonSwap).setVisibility(View.GONE);
+        if (!isScrapBook) {
+            collageView.setCollageSize(collageView.sb_sizeMatrix, 45);
+            if (seekbarSize != null) {
+                seekbarSize.setProgress(45);
+            }
+        }
+        collageView.setBlurBitmap(collageView.blurRadius, false);
+        if (!isScrapBook) {
+            setSelectedTab(INDEX_COLLAGE_SPACE);
+        }
+    }
+
+    void setSelectedTab(int index) {
+        if (viewFlipper != null) {
+            setTabBg(INDEX_COLLAGE);
+            int displayedChild = viewFlipper.getDisplayedChild();
+            if (displayedChild != INDEX_COLLAGE_BACKGROUND) {
+                hideColorContainer();
+            }
+            if (index == 0) {
+                if (displayedChild != 0) {
+                    viewFlipper.setInAnimation(slideLeftIn);
+                    viewFlipper.setOutAnimation(slideRightOut);
+                    viewFlipper.setDisplayedChild(INDEX_COLLAGE);
+                } else {
+                    return;
+                }
+            }
+            if (index == INDEX_COLLAGE_BACKGROUND) {
+                setTabBg(INDEX_COLLAGE_BACKGROUND);
+                if (displayedChild != INDEX_COLLAGE_BACKGROUND) {
+                    if (displayedChild == 0) {
+                        viewFlipper.setInAnimation(slideRightIn);
+                        viewFlipper.setOutAnimation(slideLeftOut);
+                    } else {
+                        viewFlipper.setInAnimation(slideLeftIn);
+                        viewFlipper.setOutAnimation(slideRightOut);
+                    }
+                    viewFlipper.setDisplayedChild(1);
+                } else {
+                    return;
+                }
+            }
+            if (index == INDEX_COLLAGE_BLUR) {
+                setTabBg(INDEX_COLLAGE_BLUR);
+                if (displayedChild != INDEX_COLLAGE_BLUR) {
+                    if (displayedChild == 0) {
+                        viewFlipper.setInAnimation(slideRightIn);
+                        viewFlipper.setOutAnimation(slideLeftOut);
+                    } else {
+                        viewFlipper.setInAnimation(slideLeftIn);
+                        viewFlipper.setOutAnimation(slideRightOut);
+                    }
+                    viewFlipper.setDisplayedChild(INDEX_COLLAGE_BLUR);
+                } else {
+                    return;
+                }
+            }
+            if (index == INDEX_COLLAGE_SPACE) {
+                setTabBg(INDEX_COLLAGE_SPACE);
+                if (displayedChild != INDEX_COLLAGE_SPACE) {
+                    if (displayedChild == 0 || displayedChild == INDEX_COLLAGE_BACKGROUND) {
+                        viewFlipper.setInAnimation(slideRightIn);
+                        viewFlipper.setOutAnimation(slideLeftOut);
+                    } else {
+                        viewFlipper.setInAnimation(slideLeftIn);
+                        viewFlipper.setOutAnimation(slideRightOut);
+                    }
+                    viewFlipper.setDisplayedChild(INDEX_COLLAGE_SPACE);
+                } else {
+                    return;
+                }
+            }
+            if (index == INDEX_COLLAGE_RATIO) {
+                setTabBg(INDEX_COLLAGE_RATIO);
+                if (displayedChild != INDEX_COLLAGE_RATIO) {
+                    if (displayedChild == INDEX_COLLAGE_INVISIBLE_VIEW) {
+                        viewFlipper.setInAnimation(slideLeftIn);
+                        viewFlipper.setOutAnimation(slideRightOut);
+                    } else {
+                        viewFlipper.setInAnimation(slideRightIn);
+                        viewFlipper.setOutAnimation(slideLeftOut);
+                    }
+                    viewFlipper.setDisplayedChild(INDEX_COLLAGE_RATIO);
+                } else {
+                    return;
+                }
+            }
+            if (index == INDEX_COLLAGE_INVISIBLE_VIEW) {
+                setTabBg(-1);
+                if (displayedChild != INDEX_COLLAGE_INVISIBLE_VIEW) {
+                    viewFlipper.setInAnimation(slideRightIn);
+                    viewFlipper.setOutAnimation(slideLeftOut);
+                    viewFlipper.setDisplayedChild(INDEX_COLLAGE_INVISIBLE_VIEW);
+                }
+            }
+        }
+    }
+
+    private void setTabBg(int index) {
+        if (tabButtonList == null) {
+            tabButtonList = new View[TAB_SIZE];
+            tabButtonList[INDEX_COLLAGE] = findViewById(R.id.buttonCollageLayout);
+            tabButtonList[INDEX_COLLAGE_SPACE] = findViewById(R.id.buttonSpace);
+            tabButtonList[INDEX_COLLAGE_BLUR] = findViewById(R.id.buttonBlur);
+            tabButtonList[INDEX_COLLAGE_BACKGROUND] = findViewById(R.id.buttonBackground);
+            tabButtonList[INDEX_COLLAGE_RATIO] = findViewById(R.id.buttonRatio);
+            tabButtonList[INDEX_COLLAGE_INVISIBLE_VIEW] = findViewById(R.id.buttonAdjustment);
+        }
+    }
+
+    void setVisibilityOfFilterHorizontalListview(boolean show) {
+        findViewById(R.id.collage_effect_fragment_container).bringToFront();
+    }
+
+    private void hideColorContainer() {
+        if (colorContainer == null) {
+            colorContainer = (LinearLayout) findViewById(R.id.color_container);
+        }
+        colorContainer.setVisibility(View.INVISIBLE);
+    }
+
+    void createDeleteDialog() {
+        if (collageView.sb_shapeLayoutList.get(INDEX_COLLAGE).shapeArr.length == INDEX_COLLAGE_BACKGROUND) {
+            Toast msg = Toast.makeText(ScrapCreateCollageActivity.this, "You can't delete last image!", Toast.LENGTH_SHORT);
+            msg.setGravity(Gravity.CENTER, msg.getXOffset() / INDEX_COLLAGE_SPACE, msg.getYOffset() / INDEX_COLLAGE_SPACE);
+            msg.show();
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(ScrapCreateCollageActivity.this);
+        builder.setMessage("Do you want to delete it?").setCancelable(true).setPositiveButton("Yes", new OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                LinearLayout linss = findViewById(R.id.sub_tools);
+                linss.setVisibility(View.GONE);
+                collageView.deleteBitmap(collageView.sb_shapeIndex, width, height);
+
+
+            }
+        }).setNegativeButton("No", new OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+        saveImageAlert = builder.create();
+        saveImageAlert.show();
+    }
+
+
+    public void addTextDialog(String str, boolean isText) {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.input_text_di);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCancelable(false);
+        EditText editText = dialog.findViewById(R.id.et_input_txt);
+        TextView textView2 = dialog.findViewById(R.id.tv_done);
+        TextView textView = dialog.findViewById(R.id.tv_cancel);
+        editText.setTypeface(defaultFont);
+        editText.setText(str);
+        editText.setSelection(editText.getText().length());
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                editText.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+            }
+        }, 200);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                LinearLayout ly_text = findViewById(R.id.ly_text);
+                ly_text.setVisibility(View.GONE);
+
+
+                dialog.dismiss();
+            }
+        });
+        textView2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String enteredText = editText.getText().toString().trim();
+                if (!enteredText.isEmpty()) {
+                    defaultText = enteredText;
+                    dialog.dismiss();
+                    int currentTextColor = editText.getCurrentTextColor();
+                    if (isText) {
+                        activityDocumentEditor.ChangeTextSticker(currentTextColor, activityDocumentEditor, activityDocumentEditor.stickerView);
+                    } else {
+                        activityDocumentEditor.addTextSticker(currentTextColor, activityDocumentEditor, activityDocumentEditor.stickerView);
+                    }
+                } else {
+                    Toast.makeText(ScrapCreateCollageActivity.this, "Please Enter Text", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        dialog.show();
+    }
+
+    public void ChangeTextAlignment(Typeface typeface, Layout.Alignment alignment) {
+        try {
+            textSticker = new TextSticker(this);
+            textSticker.setText(defaultText);
+            textSticker.setTextColor(defaultTxtColor);
+            textSticker.setTextAlign(alignment);
+            textSticker.resizeText();
+            textSticker.setTypeface(typeface);
+            stickerView.replace(textSticker);
+            stickerView.invalidate();
+        } catch (Exception e) {
+            Log.e("TAG", "changeTextSticker: " + e);
+            e.printStackTrace();
+        }
+    }
+
+    public void ChangeTextSticker(int i, Activity activity, com.xiaopo.flying.sticker.StickerView stickerView2) {
+        try {
+            textSticker = new TextSticker(activity);
+            textSticker.setText(defaultText);
+            textSticker.setTypeface(defaultFont);
+            textSticker.setTextColor(i);
+            textSticker.setTextAlign(defaultAlign);
+            textSticker.resizeText();
+            stickerView2.replace(textSticker);
+            stickerView2.invalidate();
+        } catch (Exception e) {
+            Log.e("TAG", "changeTextSticker: " + e);
+            e.printStackTrace();
+        }
+    }
+
+
+    public void addTextSticker(int i, Activity activity, com.xiaopo.flying.sticker.StickerView stickerView2) {
+        try {
+            textSticker = new TextSticker(activity);
+            textSticker.setText(defaultText);
+            textSticker.setTypeface(defaultFont);
+            textSticker.setTextColor(i);
+            textSticker.setTextAlign(defaultAlign);
+            textSticker.resizeText();
+            stickerView2.addSticker(textSticker);
+        } catch (Exception e) {
+            Log.e("TAG", "addTextSticker: " + e);
+            e.printStackTrace();
+        }
+    }
+
+    public void onFontClick(Typeface typeface) {
+        defaultFont = typeface;
+        ChangeTextSticker(defaultTxtColor, this, stickerView);
+    }
+
+    public ArrayList<String> getAssertFile(String str) {
+        ArrayList<String> arrayList;
+        try {
+            String[] list = getAssets().list(str);
+            if (list.length == 0) {
+                return null;
+            }
+            arrayList = new ArrayList<>();
+            int i = 0;
+            while (i < list.length) {
+                try {
+                    Log.e("BASE", "font: " + list[i]);
+                    arrayList.add(list[i]);
+                    i++;
+                } catch (Exception e) {
+                    Log.e("tag", "I/O Exception", e);
+                    return arrayList;
+                }
+            }
+            return arrayList;
+        } catch (IOException e2) {
+            arrayList = null;
+            Log.e("tag", "I/O Exception", e2);
+            return arrayList;
+        }
+    }
+
+    private void getStickerData() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "http://technoapp.xyz/android/blurcamera/sticker/service.php";
+
+        Log.d("CheckLog", "URL: " + url);
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            tab_Titles.clear(); // Clear the list before adding new titles
+
+                            JSONArray nameArray = response.getJSONArray("name");
+                            for (int i = 0; i < nameArray.length(); i++) {
+                                JSONObject item = nameArray.getJSONObject(i);
+                                String title = item.getString("title");
+                                tab_Titles.add(title);
+                            }
+
+                            // Log the total number of tab titles
+                            Log.d("TotalTitles", "Total tab titles: " + tab_Titles.size());
+                            setupViewPagerSticker();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                });
+
+        queue.add(request);
+    }
+
+    private void setupViewPagerSticker() {
+        StickerCategoryPagerAdapter pagerAdapter = new StickerCategoryPagerAdapter(getSupportFragmentManager(), tab_Titles);
+        view_Pager.setAdapter(pagerAdapter);
+        tab_Layout.setupWithViewPager(view_Pager);
+    }
+
+    private static class StickerCategoryPagerAdapter extends FragmentPagerAdapter {
+
+        private List<String> tabTitles;
+
+        public StickerCategoryPagerAdapter(FragmentManager fm, List<String> tabTitles) {
+            super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+            this.tabTitles = tabTitles;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return Spiral_StickerCategoryFragmenttt.newInstance(tabTitles.get(position));
+        }
+
+        @Override
+        public int getCount() {
+            return tabTitles.size();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return tabTitles.get(position);
+        }
+    }
+
+
+    public static void stickerDetaill(String strr) {
+        try {
+            ScrapCreateCollageActivity neonLightEffectActivity = main_act;
+            ScrapCreateCollageActivity neonLightEffectActivity2 = main_act;
+            neonLightEffectActivity.sticker = new StickerImageView(neonLightEffectActivity2, neonLightEffectActivity2.onTouchSticker);
+            Glide.with((FragmentActivity) main_act).asBitmap().load(strr).into(new SimpleTarget<Bitmap>() {
+
+
+                public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                    main_act.sticker.setImageBitmap(resource);
+                }
+            });
+            main_act.view_id = new Random().nextInt();
+            if (main_act.view_id < 0) {
+                main_act.view_id -= main_act.view_id * 2;
+            }
+            main_act.sticker.setId(main_act.view_id);
+            main_act.stickerviewId.add(Integer.valueOf(main_act.view_id));
+            main_act.sticker.setOnClickListener(new View.OnClickListener() {
+
+
+                public void onClick(View view) {
+                    main_act.sticker.setControlItemsHidden(true);
+                }
+            });
+            main_act.mainLayout.addView(main_act.sticker);
+
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    private void onImageClick(int imageResource) {
+        new BitmapWorkerTaskk().execute(extras, bundles);
+    }
+
+
+}
